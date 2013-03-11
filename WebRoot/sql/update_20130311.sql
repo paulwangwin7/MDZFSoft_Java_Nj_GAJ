@@ -1,5 +1,8 @@
+/****** 说明
+	如系统于2013年3月11日就已搭建，那么执行这个sql后，frame_upload数据将被清空，请做好备份
+ ******/
 -----------------------------------------------------
--- Export file for user GONGAN                     --
+-- Export file for user NJMD                     --
 -- Created by Administrator on 2013/3/10, 15:46:34 --
 -----------------------------------------------------
 drop table FRAME_UPLOAD;
