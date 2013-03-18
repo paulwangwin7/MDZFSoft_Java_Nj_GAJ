@@ -49,6 +49,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	public static final String IP_ADDR = "ipAddr";
 	public static final String REAL_PATH = "realPath";
 	public static final String FLV_PATH = "flvPath";
+	public static final String USE_TIME = "useTime";
 
 	@SuppressWarnings("finally")
 	public int save(FrameUpload transientInstance) {
@@ -227,6 +228,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		return findByProperty(FLV_PATH, flvPath);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List findByUseTime(Object useTime) {
+		return findByProperty(USE_TIME, useTime);
+	}
+
 	@SuppressWarnings({ "finally", "unchecked" })
 	public List findAll() {
 		List results = null;
@@ -327,8 +333,9 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	public Page uploadListByTree(String uploadName, String treeId, String parentTreeId,
 			String beginTime, String endTime, String uploadUserId,
 			String fileCreateUserId, String fileStats, String fileRemark,
-			String takeTime_begin, String takeTime_end,String policeCode,
-			String policeTime_begin, String policeTime_end, String policeDesc, Page page) {
+			String takeTime_begin, String takeTime_end, String policeCode,
+			String policeTime_begin, String policeTime_end, String policeDesc,
+			String useTime_begin, String useTime_end, Page page) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -338,6 +345,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 				queryString.append(" and model.tree1Id = ?");
 			} else {
 				queryString.append(" and model.tree2Id = ?");
+			}
+			if(useTime_begin.equals("") || useTime_end.equals("")) {
+
+			} else {
+				queryString.append(" and model.useTime >='"+useTime_begin+"' and model.useTime <='"+useTime_end+"'");
 			}
 			if(takeTime_begin.equals("") || takeTime_end.equals("")) {
 
@@ -426,8 +438,9 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	public Page uploadListByAdmin(String uploadName, String treeId, String parentTreeId,
 			String beginTime, String endTime, String uploadUserId,
 			String fileCreateUserId, String fileStats, String fileRemark,
-			String takeTime_begin, String takeTime_end,String policeCode,
-			String policeTime_begin, String policeTime_end, String policeDesc, Page page) {
+			String takeTime_begin, String takeTime_end, String policeCode,
+			String policeTime_begin, String policeTime_end, String policeDesc,
+			String useTime_begin, String useTime_end, Page page) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -437,6 +450,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 
 			} else {
 				queryString.append(" and model.uploadTime >=? and model.uploadTime <=?");
+			}
+			if(useTime_begin.equals("") || useTime_end.equals("")) {
+
+			} else {
+				queryString.append(" and model.useTime >='"+useTime_begin+"' and model.useTime <='"+useTime_end+"'");
 			}
 			if(takeTime_begin.equals("") || takeTime_end.equals("")) {
 
@@ -509,6 +527,55 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		} catch (RuntimeException re) {
 			log.error("get failed", re);
 //			throw re;
+		} finally {
+			session.close();
+			return page;
+		}
+	}
+
+	public Page uploadListTable(String beginTime, String endTime, Long treeId, Page page) {
+		Session session = getSession();
+		try {
+			session.clear();
+			StringBuffer queryString = new StringBuffer("from FrameUpload as model");
+			queryString.append(" where model.fileState = 'A'");
+			if(treeId!=null && treeId!=0) {
+				queryString.append(" and (model.tree1Id = ? or model.tree2Id = ?) ");
+			}
+			if(beginTime.equals("") || endTime.equals("")) {
+				
+			}
+			else {
+				queryString.append(" and (model.uploadTime >= ? and model.uploadTime <= ?) ");
+			}
+			queryString.append(" order by model.tree1Id, model.userId, model.uploadTime");
+			Query queryObject = session.createQuery(queryString.toString());
+			int parameterIndex = 0;
+			if(treeId!=null && treeId!=0) {
+				queryObject.setParameter(parameterIndex++, treeId);
+				queryObject.setParameter(parameterIndex++, treeId);
+			}
+			if(beginTime.equals("") || endTime.equals("")) {
+				
+			}
+			else {
+				queryObject.setParameter(parameterIndex++, beginTime);
+				queryObject.setParameter(parameterIndex++, endTime);
+			}
+			page.setTotal(queryObject.list().size());
+			queryObject.setFirstResult((page.getPageCute()-1)*page.getDbLine());
+			queryObject.setMaxResults(page.getDbLine());
+			List<UploadForm> uploadList = null;
+			List querylist = queryObject.list();
+			if(querylist!=null && querylist.size()>0) {
+				uploadList = new ArrayList<UploadForm>();
+				for(Object obj: querylist) {
+					uploadList.add(setUploadFormByFrameUpload(new UploadForm(), (FrameUpload)obj));
+				}
+			}
+			page.setListObject(uploadList);
+		} catch(RuntimeException re) {
+			log.error("get failed", re);
 		} finally {
 			session.close();
 			return page;
@@ -652,6 +719,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		uploadForm.setPoliceDesc(frameUpload.getPoliceDesc());
 		uploadForm.setPoliceTime(frameUpload.getPoliceTime());
 		uploadForm.setTakeTime(frameUpload.getTakeTime());
+		uploadForm.setUseTime(frameUpload.getUseTime());
 		return uploadForm;
 	}
 

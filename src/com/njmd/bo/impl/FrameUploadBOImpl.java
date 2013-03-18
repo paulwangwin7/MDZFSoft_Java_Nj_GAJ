@@ -41,21 +41,32 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 			String parentTreeId, String beginTime, String endTime,
 			String uploadUserId, String fileCreateUserId, String fileStats,
 			String fileRemark, String takeTime_begin, String takeTime_end,
-			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc, Page page) {
+			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
+			String useTime_begin, String useTime_end, Page page) {
 		// TODO Auto-generated method stub
-		return frameUploadDAO.uploadListByTree(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark, takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, page);
+		return frameUploadDAO.uploadListByTree(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, page);
 	}
 
 	public Page uploadListByAdmin(String uploadName, String treeId,
 			String parentTreeId, String beginTime, String endTime,
 			String uploadUserId, String fileCreateUserId, String fileStats,
 			String fileRemark, String takeTime_begin, String takeTime_end,
-			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc, Page page) {
+			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
+			String useTime_begin, String useTime_end, Page page) {
 		// TODO Auto-generated method stub
-		return frameUploadDAO.uploadListByAdmin(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark, takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, page);
+		return frameUploadDAO.uploadListByAdmin(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, page);
 	}
 
-	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime) {
+	@Override
+	public Page uploadListTable(String beginTime, String endTime, Long treeId,
+			Page page) {
+		// TODO Auto-generated method stub
+		return frameUploadDAO.uploadListTable(beginTime, endTime, treeId, page);
+	}
+
+	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime, Long useTime) {
 		// TODO Auto-generated method stub
 		FrameUpload frameUpload = frameUploadDAO.findById(uploadId);
 		frameUpload.setFileRemark(remark);
@@ -63,6 +74,7 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 		frameUpload.setPoliceDesc(policeDesc);
 		frameUpload.setPoliceTime(policeTime);
 		frameUpload.setTakeTime(takeTime);
+		frameUpload.setUseTime(useTime);
 		return frameUploadDAO.attachDirty(frameUpload);
 	}
 

@@ -31,6 +31,7 @@ public class FrameUpload implements java.io.Serializable {
 	private String policeDesc;
 	private String takeTime;
 	private String policeTime;
+	private Long useTime;
 
 	// Constructors
 
@@ -49,7 +50,8 @@ public class FrameUpload implements java.io.Serializable {
 			String showPath, String uploadTime, String fileState, Long tree2Id,
 			Long tree1Id, String treeName, String fileStats, String fileRemark,
 			String ipAddr, String realPath, String flvPath, 
-			String policeCode, String policeDesc, String takeTime, String policeTime) {
+			String policeCode, String policeDesc, String takeTime,
+			String policeTime, Long useTime) {
 		this.uploadId = uploadId;
 		this.userId = userId;
 		this.editId = editId;
@@ -67,6 +69,7 @@ public class FrameUpload implements java.io.Serializable {
 		this.ipAddr = ipAddr;
 		this.realPath = realPath;
 		this.flvPath = flvPath;
+		this.useTime = useTime;
 	}
 
 	// Property accessors
@@ -237,6 +240,14 @@ public class FrameUpload implements java.io.Serializable {
 
 	public void setPoliceTime(String policeTime) {
 		this.policeTime = policeTime;
+	}
+
+	public Long getUseTime() {
+		return useTime;
+	}
+
+	public void setUseTime(Long useTime) {
+		this.useTime = useTime;
 	}
 
 }

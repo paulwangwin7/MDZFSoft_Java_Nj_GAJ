@@ -64,6 +64,10 @@ $(document).ready(function(){
 								<label>文件备注:</label><input class="input_168x19" type="text" name="fileRemark" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>" />
 								</div>
 								<div class="mt_10">
+								<label>到达时间:</label>
+									<input type="text" class="input_38x19" name="useTime_begin" id="useTime_begin" value="<%=request.getParameter("useTime_begin")==null?"":request.getParameter("useTime_begin") %>" />&nbsp;&nbsp;-&nbsp;&nbsp;<input type="text" class="input_38x19" name="useTime_end" id="useTime_end" value="<%=request.getParameter("useTime_end")==null?"":request.getParameter("useTime_end") %>" /> 分钟内
+								</div>
+								<div class="mt_10">
 								<label>上&nbsp;传&nbsp;人:</label>
 									<input type="text" class="input_168x19" name="uploadUserName" id="userName" readonly onclick="userChoose('1212')" value="<%=request.getParameter("uploadUserName")==null?"":request.getParameter("uploadUserName") %>" />&nbsp;&nbsp;&nbsp;&nbsp;
 								<label>录&nbsp;制&nbsp;人:</label><input type="text" class="input_168x19" name="uploadEditName" id="editName" readonly onclick="userChoose()" value="<%=request.getParameter("uploadEditName")==null?"":request.getParameter("uploadEditName") %>"/>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -191,6 +195,7 @@ $(document).ready(function(){
 										<%
 											}
 										%>
+										<a href="javascript:detailShow('<%=uploadForm.getUploadId() %>')" class="blue_mod_btn fr">详情</a>
 										<%
 											if(uploadForm.getPlayPath()!=null && uploadForm.getPlayPath().length()>4) {
 												if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).toLowerCase().equals(".jpg"))
@@ -249,6 +254,8 @@ $(document).ready(function(){
 <input type="hidden" name="policeTime_end" value="<%=request.getParameter("policeTime_end")==null?"":request.getParameter("policeTime_end") %>" />
 <input type="hidden" name="policeCode" value="<%=request.getParameter("policeCode")==null?"":request.getParameter("policeCode") %>" />
 <input type="hidden" name="policeDesc" value="<%=request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc") %>" />
+<input type="hidden" name="useTime_begin" value="<%=request.getParameter("useTime_begin")==null?"":request.getParameter("useTime_begin") %>" />
+<input type="hidden" name="useTime_end" value="<%=request.getParameter("useTime_end")==null?"":request.getParameter("useTime_end") %>" />
 </form>
 <script>
 function showUpload(pageCute)

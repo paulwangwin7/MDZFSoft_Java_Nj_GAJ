@@ -22,7 +22,7 @@
 		{
 			UploadForm uploadForm = uploadFormList.get(i);
 			String fileType = "图片";
-			if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("avi"))
+			if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("mp4"))
 			{
 				fileType = "视频";
 			}
@@ -64,6 +64,7 @@
 			<input type="hidden" id="police_desc_<%=i %>" value="<%=uploadForm.getPoliceDesc()==null?"":uploadForm.getPoliceDesc() %>" />
 			<input type="hidden" id="take_time_<%=i %>" value="<%=uploadForm.getTakeTime()==null?"":uploadForm.getTakeTime() %>" />
 			<input type="hidden" id="police_time_<%=i %>" value="<%=uploadForm.getPoliceTime()==null?"":uploadForm.getPoliceTime() %>" />
+			<input type="hidden" id="useTime_<%=i %>" value="<%=uploadForm.getUseTime()==null?"":uploadForm.getUseTime() %>" />
 		</div>
 	</li>
 	<%
@@ -93,6 +94,11 @@
 		</td>
 		<td>
 			<table>
+				<tr>
+					<td align="right">到达时间</td>
+					<td>：</td>
+					<td id="useTime_"></td>
+				</tr>
 				<tr>
 					<td align="right">文件类型</td>
 					<td>：</td>
@@ -256,6 +262,10 @@ jQuery(function($) {
  */
 function showUploadDetail(forIndex, editAction) {
 jQuery(function($) {
+	$("#useTime_").html($("#useTime_"+forIndex).val());
+	if($("#useTime_").html()!="") {
+		$("#useTime_").html($("#useTime_").html()+" 分钟");
+	}
 	$("#img_").attr("src", $("#img_"+forIndex).val());
 	$("#type_").html($("#type_"+forIndex).val());
 	$("#name_").html($("#name_"+forIndex).val());

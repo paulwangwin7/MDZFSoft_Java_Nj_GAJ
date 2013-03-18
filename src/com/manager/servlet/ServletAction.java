@@ -1064,7 +1064,14 @@ public class ServletAction extends DispatchAction{
 			String police_code = request.getParameter("police_code")==null?"":request.getParameter("police_code");
 			String police_time = request.getParameter("police_time")==null?"":request.getParameter("police_time");
 			String police_desc = request.getParameter("police_desc")==null?"":request.getParameter("police_desc");
-			switch(frameUploadBO.uploadRemark(new Long(uploadId), file_remark, police_code, police_time, police_desc, take_time))
+			Long useTime = null;
+			if(police_time!="" && take_time!="") {
+				useTime = Long.parseLong(DateUtils.timeXJ(take_time, police_time)+"");
+				if(useTime==0) {
+					useTime = null;
+				}
+			}
+			switch(frameUploadBO.uploadRemark(new Long(uploadId), file_remark, police_code, police_time, police_desc, take_time, useTime))
 			{
 				case 0: result.setMsg("上传详情信息设置成功！");userLog(request, "上传详情信息设置成功！");break;
 				case 1 : result.setMsg("上传详情信息设置失败！");result.setRetCode(Constants.ACTION_FAILED);break;

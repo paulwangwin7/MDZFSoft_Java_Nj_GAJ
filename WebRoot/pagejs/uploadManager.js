@@ -92,3 +92,8 @@ jQuery(function($) {
 	$("#playWavDivForm").submit();
 });
 }
+
+function detailShow(uploadId)
+{
+	window.showModalDialog(contextPath()+"/userAction.do?method=fileDetailShow&uploadId="+uploadId,"","dialogwidth:600px;dialogheight:380px; toolbar=no,top=200,left=200, menubar=no, location=no, status=no");
+}

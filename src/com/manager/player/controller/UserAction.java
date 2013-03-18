@@ -589,6 +589,23 @@ public class UserAction extends DispatchAction {
 			String policeTime_end = request.getParameter("policeTime_end")==null?"":request.getParameter("policeTime_end").replace("-", "").replace(":", "");
 			String policeCode = request.getParameter("policeCode")==null?"":request.getParameter("policeCode");
 			String policeDesc = request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc");
+			String useTime_begin = request.getParameter("useTime_begin")==null?"":request.getParameter("useTime_begin").trim();
+			String useTime_end = request.getParameter("useTime_end")==null?"":request.getParameter("useTime_end").trim();
+			if(useTime_begin!=null) {
+				try {
+					useTime_begin = Integer.parseInt(useTime_begin)+"";
+				} catch(Exception ex) {
+					useTime_begin = "";
+				}
+			}
+			if(useTime_end!=null) {
+				try {
+					useTime_end = Integer.parseInt(useTime_end)+"";
+				} catch(Exception ex) {
+					useTime_end = "";
+				}
+			}
+			
 			int pagecute = 1;
 			try
 			{
@@ -605,7 +622,8 @@ public class UserAction extends DispatchAction {
 					endTime = endTime.replace("-", "").replace(" ", "").replace(":", "");
 				}
 				if(userForm.getUserId()==0) {
-					request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark, takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, new Page(pagecute, 10)));
+					request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
+							takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, new Page(pagecute, 10)));
 					return mapping.findForward("uploadFileShow");
 				} else {
 					if(parentTreeId!=-1)
@@ -613,11 +631,13 @@ public class UserAction extends DispatchAction {
 						if(parentTreeId==0){
 							parentTreeId = userForm.getTreeId();
 						}
-						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByTree(uploadName, userForm.getTreeId()+"", parentTreeId+"", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark, takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, new Page(pagecute, 10)));
+						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByTree(uploadName, userForm.getTreeId()+"", parentTreeId+"", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
+								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, new Page(pagecute, 10)));
 						return mapping.findForward("uploadFileShow");
 					}
 					else {
-						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark, takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, new Page(pagecute, 10)));
+						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
+								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, new Page(pagecute, 10)));
 						return mapping.findForward("uploadFileShow");
 					}
 				}
@@ -631,10 +651,80 @@ public class UserAction extends DispatchAction {
 		return mapping.findForward(frame_information);
 	}
 
+	/**
+	 * 上传列表数据统计
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ActionForward uploadListTable(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
+		boolean selectSuccess = false;
+		switch(userAction(request, "11"))// 0-正常运行操作 1-用户登录已超时 2-用户不在此权限范围
+		{
+			case 0: selectSuccess = true;break;
+			case 1 : informationFrameForm = new InformationFrameForm("尊敬的用户，您登录已超时，请刷新后重新登录~","","1","wjck","文件查看");break;
+			case 2 : informationFrameForm = new InformationFrameForm("尊敬的用户，您不具备此权限范围~","","1","wjck","文件查看");break;
+			default : informationFrameForm = new InformationFrameForm("查询失败 系统超时~","","1","wjck","文件查看");
+		}
+		if(selectSuccess) {
+			String beginTime = request.getParameter("beginTime")==null?"":request.getParameter("beginTime");
+			String endTime = request.getParameter("endTime")==null?"":request.getParameter("endTime");
+			String pageCute = request.getParameter("pageCute")==null?"":request.getParameter("pageCute");
+			UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
+			Long treeId = userForm.getTreeId();
+			if(userForm.getUserId()==0) {
+				treeId = new Long(0);
+			}
+			int pagecute = 1;
+			try
+			{
+				pagecute = Integer.parseInt(pageCute);
+			}
+			catch(Exception ex)
+			{
+				pagecute = 1;
+			}
+			request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListTable(beginTime, endTime, treeId, new Page(pagecute, 10)));
+			return mapping.findForward("uploadListTable");
+		}
+		request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+		return mapping.findForward(frame_information);
+	}
+
 	public ActionForward fileDetail(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) {
 		request.setAttribute("fileDetail", frameUploadBO.uploadDetail(Long.parseLong(request.getParameter("uploadId"))));
 		return mapping.findForward("playFile");
+	}
+
+	/**
+	 * 文件管理 -- 文件详情查看
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ActionForward fileDetailShow(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
+		boolean showSuccess = false;
+		switch(userAction(request, "8"))// 0-正常运行操作 1-用户登录已超时 2-用户不在此权限范围
+		{
+			case 0: showSuccess = true;break;
+			case 1 : informationFrameForm = new InformationFrameForm("尊敬的用户，您登录已超时，请刷新后重新登录~","","1","wjck","文件查看");break;
+			case 2 : informationFrameForm = new InformationFrameForm("尊敬的用户，您不具备此权限范围~","","1","wjck","文件查看");break;
+			default : informationFrameForm = new InformationFrameForm("添加失败 系统超时~","","1","wjck","文件查看");
+		}
+		if(showSuccess)
+		{
+			request.setAttribute("fileDetail", frameUploadBO.uploadDetail(Long.parseLong(request.getParameter("uploadId"))));
+			return mapping.findForward("fileDetail");
+		}
+		request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+		return mapping.findForward(frame_information);
 	}
 
 	/**

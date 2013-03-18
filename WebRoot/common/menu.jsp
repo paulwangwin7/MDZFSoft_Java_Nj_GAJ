@@ -69,13 +69,14 @@ if(roleForm==null)
 					}
 				%>
 				<%
-					if(canOperate(roleForm, "6") || canOperate(roleForm, "7"))
+					if(canOperate(roleForm, "6") || canOperate(roleForm, "7") || canOperate(roleForm, "11"))
 					{
 				%>	
 				<li class="nav_item" id="menuIndex_4"><a class="nav_target">日常查询</a>
 					<ul class="nav_sublist" id="childMenu_4">
 						<li class="nav_subitem" id="menu_6"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=analysisUpload">上传报表</a></li>
 						<li class="nav_subitem" id="menu_7"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=actionLogManagerQuery">操作日志</a></li>
+						<li class="nav_subitem" id="menu_8"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=uploadListTable">报表统计</a></li>
 					</ul>
 				</li>
 				<%

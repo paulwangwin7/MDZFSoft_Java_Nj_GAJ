@@ -48,7 +48,9 @@ public class UploadForm {
 	@Expose
 	private String takeTime;	//录制时间
 	@Expose
-	private String policeTime;	//出警时间
+	private String policeTime;	//接警时间
+	@Expose
+	private Long useTime;	//到达时间 = 接警时间 - 录制时间
 
 	public String getPoliceCode() {
 		return policeCode;
@@ -213,5 +215,13 @@ public class UploadForm {
 
 	public void setIpAddr(String ipAddr) {
 		this.ipAddr = ipAddr;
+	}
+
+	public Long getUseTime() {
+		return useTime;
+	}
+
+	public void setUseTime(Long useTime) {
+		this.useTime = useTime;
 	}
 }

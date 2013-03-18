@@ -275,6 +275,40 @@ public class DateUtils
 		}
 	}
 
+	/**
+	 * 时间相减
+	 * @param time1
+	 * @param time2
+	 * @return
+	 */
+	public static int timeXJ(String time1, String time2) {
+		int xjMIN = 0;
+		if(Long.parseLong(time1) < Long.parseLong(time2)) {
+			return xjMIN;
+		}
+		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		try {
+			Date date1 = inputFormat.parse(time1);
+			Date date2 = inputFormat.parse(time2);
+			long mint=Math.abs((date1.getTime()-date2.getTime())/(1000));
+			int hor=(int)mint/3600;
+			int mins=(int)mint%3600/60;
+			int secd=(int)mint%3600;
+			int day=(int)hor/24;
+			if(day>0) {
+				xjMIN += 60 * 24 * day;
+			}
+			if(hor>0) {
+				xjMIN += 60 * hor;
+			}
+			xjMIN += mins;
+		} catch(Exception ex) {
+			
+		} finally {
+			return xjMIN;
+		}
+	}
+
 	public static void main(String[] args)
 	{
 		//System.out.print(rollHour("20100708000000",0));
@@ -286,5 +320,6 @@ public class DateUtils
 //		System.out.println(getDayStr());
 //		System.out.println(getChar8ByJs("10/02/2020"));
 //		System.out.println(rollDate(getChar8(), -6));
+		System.out.println(timeXJ("20130129171212","20130129124550"));
 	}
 }

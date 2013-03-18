@@ -113,5 +113,10 @@
                 <comment>出警时间</comment>
             </column>
         </property>
+        <property name="useTime" type="java.lang.Long">
+            <column name="USE_TIME" precision="10" scale="0">
+                <comment>接警用时（单位：分钟）</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

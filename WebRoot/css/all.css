@@ -65,6 +65,7 @@ textarea { overflow:auto; resize:none;}
 .input_186x19{ width:186px;  height:19px; line-height:19px; border:1px solid #c9c9c9; vertical-align:middle;}
 .input_79x19{ width:79px;  height:19px; line-height:19px; border:1px solid #c9c9c9; vertical-align:middle;}
 .select_79x19{ width:79px;  height:19px; line-height:19px; border:1px solid #c9c9c9; vertical-align:middle;}
+.input_38x19{ width:38px;  height:19px; line-height:19px; border:1px solid #c9c9c9; vertical-align:middle;}
 .input_67x25{ width:67px; height:25px; line-height:25px; background:url(../images/short_text.png) no-repeat 0 0; border:none; vertical-align:middle}
 .form_list{ padding:30px 0px 0px 0px;}
 .form_list .form_item{ padding-bottom:15px;}

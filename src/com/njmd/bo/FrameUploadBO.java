@@ -56,9 +56,10 @@ public interface FrameUploadBO {
 	 * @param policeTime	出警时间
 	 * @param policeDesc	警情描述
 	 * @param takeTime		录制时间
+	 * @param useTime		接警时间-录制时间
 	 * @return 0-成功； 1-失败 系统异常；
 	 */
-	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime);
+	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime, Long useTime);
 
 	/**
 	 * 文件删除（逻辑删除）
@@ -106,7 +107,7 @@ public interface FrameUploadBO {
 								String fileCreateUserId, String fileStats, String fileRemark,
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
-								Page page);
+								String useTime_begin, String useTime_end, Page page);
 
 	/**
 	 * 管理员文件查询
@@ -123,6 +124,8 @@ public interface FrameUploadBO {
 	 * @param takeTime			录制时间
 	 * @param policeCode		接警编号
 	 * @param policeTime		接警时间
+	 * @param useTime_begin		到达时间（起始）
+	 * @param useTime_end		到达时间（结束）
 	 * @param page
 	 * 			pagecute 当前页 默认第1页
 	 *			pageline 每页行数 默认10行
@@ -133,7 +136,18 @@ public interface FrameUploadBO {
 								String fileCreateUserId, String fileStats, String fileRemark,
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
-								Page page);
+								String useTime_begin, String useTime_end, Page page);
+
+	/**
+	 * 上传列表数据统计
+	 * 
+	 * @param beginTime
+	 * @param endTime
+	 * @param treeId
+	 * @param page
+	 * @return
+	 */
+	public Page uploadListTable(String beginTime, String endTime, Long treeId, Page page);
 
 	/**
 	 * 我的上传列表
