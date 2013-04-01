@@ -3,6 +3,7 @@ package com.njmd.bo;
 import java.util.List;
 
 import com.manager.pub.bean.Page;
+import com.manager.pub.bean.PoliceTypeForm;
 import com.manager.pub.bean.UploadForm;
 
 
@@ -57,9 +58,10 @@ public interface FrameUploadBO {
 	 * @param policeDesc	警情描述
 	 * @param takeTime		录制时间
 	 * @param useTime		接警时间-录制时间
+	 * @param policeType	文件类型
 	 * @return 0-成功； 1-失败 系统异常；
 	 */
-	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime, Long useTime);
+	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime, Long useTime, Long policeType);
 
 	/**
 	 * 文件删除（逻辑删除）
@@ -107,7 +109,7 @@ public interface FrameUploadBO {
 								String fileCreateUserId, String fileStats, String fileRemark,
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
-								String useTime_begin, String useTime_end, Page page);
+								String useTime_begin, String useTime_end, Long policeType, Page page);
 
 	/**
 	 * 管理员文件查询
@@ -136,7 +138,7 @@ public interface FrameUploadBO {
 								String fileCreateUserId, String fileStats, String fileRemark,
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
-								String useTime_begin, String useTime_end, Page page);
+								String useTime_begin, String useTime_end, Long policeType, Page page);
 
 	/**
 	 * 上传列表数据统计
@@ -177,4 +179,10 @@ public interface FrameUploadBO {
 	 * @return
 	 */
 	public List<UploadForm> expiredUploadAllList(String expired);
+
+	/**
+	 * 获取文件上传类型
+	 * @return
+	 */
+	public List<PoliceTypeForm> policeTypeAll();
 }

@@ -51,6 +51,10 @@ public class UploadForm {
 	private String policeTime;	//接警时间
 	@Expose
 	private Long useTime;	//到达时间 = 接警时间 - 录制时间
+	@Expose
+	private Long policeType;//接警类型
+	@Expose
+	private String typeName;//接警类型
 
 	public String getPoliceCode() {
 		return policeCode;
@@ -223,5 +227,21 @@ public class UploadForm {
 
 	public void setUseTime(Long useTime) {
 		this.useTime = useTime;
+	}
+
+	public Long getPoliceType() {
+		return policeType;
+	}
+
+	public void setPoliceType(Long policeType) {
+		this.policeType = policeType;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 }

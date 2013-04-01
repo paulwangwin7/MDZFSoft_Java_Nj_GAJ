@@ -30,6 +30,8 @@
 		<forward name="userSelect" path="/userSelect.jsp" /><!-- 选择警员 -->
 		<forward name="fileDetail" path="/fileDetail.jsp" /><!-- 文件查看 -->
 		<forward name="uploadListTable" path="/uploadListTable.jsp" /><!-- 上传列表数据统计 -->
+		<forward name="policeTypeSelect" path="/common/policeType.jsp" /><!-- 上传列表数据统计 -->
+		
 		<forward name="frame_information" path="/frame_information.jsp" />
 		<forward name="db" path="/db.jsp" />
 

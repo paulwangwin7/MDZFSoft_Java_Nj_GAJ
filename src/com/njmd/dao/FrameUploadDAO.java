@@ -1,10 +1,12 @@
 package com.njmd.dao;
 
 import com.manager.pub.bean.Page;
+import com.manager.pub.bean.PoliceTypeForm;
 import com.manager.pub.bean.UploadForm;
 import com.manager.pub.util.Constants;
 import com.manager.pub.util.DateUtils;
 import com.njmd.dao.BaseHibernateDAO;
+import com.njmd.pojo.FramePoliceType;
 import com.njmd.pojo.FrameTree;
 import com.njmd.pojo.FrameUpload;
 import com.njmd.pojo.FrameUser;
@@ -50,6 +52,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	public static final String REAL_PATH = "realPath";
 	public static final String FLV_PATH = "flvPath";
 	public static final String USE_TIME = "useTime";
+	public static final String POLICE_TYPE = "policeType";
 
 	@SuppressWarnings("finally")
 	public int save(FrameUpload transientInstance) {
@@ -233,6 +236,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		return findByProperty(USE_TIME, useTime);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List findByPoliceType(Object policeType) {
+		return findByProperty(POLICE_TYPE, policeType);
+	}
+
 	@SuppressWarnings({ "finally", "unchecked" })
 	public List findAll() {
 		List results = null;
@@ -335,7 +343,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			String fileCreateUserId, String fileStats, String fileRemark,
 			String takeTime_begin, String takeTime_end, String policeCode,
 			String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -345,6 +353,9 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 				queryString.append(" and model.tree1Id = ?");
 			} else {
 				queryString.append(" and model.tree2Id = ?");
+			}
+			if(policeType!=null && policeType!=0) {
+				queryString.append(" and model.policeType = "+policeType);
 			}
 			if(useTime_begin.equals("") || useTime_end.equals("")) {
 
@@ -440,12 +451,15 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			String fileCreateUserId, String fileStats, String fileRemark,
 			String takeTime_begin, String takeTime_end, String policeCode,
 			String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page) {
 		Session session = getSession();
 		try {
 			session.clear();
 			StringBuffer queryString = new StringBuffer("from FrameUpload as model");
 			queryString.append(" where model.fileState = 'A'");
+			if(policeType!=null && policeType!=0) {
+				queryString.append(" and model.policeType = "+policeType);
+			}
 			if(beginTime.equals("") || beginTime.equals("")) {
 
 			} else {
@@ -720,6 +734,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		uploadForm.setPoliceTime(frameUpload.getPoliceTime());
 		uploadForm.setTakeTime(frameUpload.getTakeTime());
 		uploadForm.setUseTime(frameUpload.getUseTime());
+		uploadForm.setPoliceType(frameUpload.getPoliceType());
 		return uploadForm;
 	}
 
@@ -767,24 +782,54 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		}
 	}
 
+	@SuppressWarnings({ "finally", "unchecked" })
+	public List<PoliceTypeForm> policeTypeAll() {
+		List<PoliceTypeForm> results = null;
+		log.debug("finding all FramePoliceType instances");
+		Session session = getSession();
+		try {
+			session.clear();
+			String queryString = "from FramePoliceType";
+			Query queryObject = session.createQuery(queryString);
+			List list = queryObject.list();
+			if(list!=null && list.size()>0) {
+				results = new ArrayList<PoliceTypeForm>();
+				for(Object obj: list) {
+					FramePoliceType frameForm = (FramePoliceType)obj;
+					PoliceTypeForm form = new PoliceTypeForm();
+					form.setTypeId(frameForm.getTypeId());
+					form.setTypeName(frameForm.getTypeName());
+					results.add(form);
+				}
+			}
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		} finally {
+			session.close();
+			return results;
+		}
+	}
+
 	public static void main(String[] args) {
-		UploadForm uploadForm = new FrameUploadDAO().uploadDetail(new Long(87));
-		System.out.println(uploadForm.getUserId());
-		System.out.println(uploadForm.getEditId());
-		System.out.println(uploadForm.getUploadName());
-		System.out.println(uploadForm.getPlayPath());
-		System.out.println(uploadForm.getShowPath());
-		System.out.println(uploadForm.getFileCreatetime());
-		System.out.println(DateUtils.getChar14());
-		System.out.println(uploadForm.getFileState());
-		System.out.println(uploadForm.getTree2Id());
-		System.out.println(uploadForm.getTree1Id());
-		System.out.println(uploadForm.getFileRemark());
-		System.out.println(uploadForm.getIpAddr());
-		System.out.println(uploadForm.getFileSavePath());
-		System.out.println(uploadForm.getFlvPath());
-		System.out.println(uploadForm.getTreeName());
-		System.out.println(uploadForm.getUserName());
-		System.out.println(uploadForm.getEditName());
+//		UploadForm uploadForm = new FrameUploadDAO().uploadDetail(new Long(87));
+//		System.out.println(uploadForm.getUserId());
+//		System.out.println(uploadForm.getEditId());
+//		System.out.println(uploadForm.getUploadName());
+//		System.out.println(uploadForm.getPlayPath());
+//		System.out.println(uploadForm.getShowPath());
+//		System.out.println(uploadForm.getFileCreatetime());
+//		System.out.println(DateUtils.getChar14());
+//		System.out.println(uploadForm.getFileState());
+//		System.out.println(uploadForm.getTree2Id());
+//		System.out.println(uploadForm.getTree1Id());
+//		System.out.println(uploadForm.getFileRemark());
+//		System.out.println(uploadForm.getIpAddr());
+//		System.out.println(uploadForm.getFileSavePath());
+//		System.out.println(uploadForm.getFlvPath());
+//		System.out.println(uploadForm.getTreeName());
+//		System.out.println(uploadForm.getUserName());
+//		System.out.println(uploadForm.getEditName());
+		new FrameUploadDAO().policeTypeAll();
 	}
 }

@@ -47,7 +47,7 @@ public class Constants
 	 */
 	public static String timeFormat(String timeStr, String formatType)
 	{
-		if(timeStr.length()<8)
+		if(timeStr==null || timeStr.length()<8)
 		{
 			return "";
 		}

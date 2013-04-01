@@ -61,7 +61,7 @@ if(roleForm==null)
 				<li class="nav_item" id="menuIndex_3"><a class="nav_target">文件管理</a>
 					<ul class="nav_sublist" id="childMenu_3">
 						<li class="nav_subitem" id="menu_5"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=userFileUpload">文件上传</a></li>
-						<li class="nav_subitem" id="menu_8"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=filePlayShow">文件查看</a></li>
+						<li class="nav_subitem" id="menu_8"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=filePlayShow">文件检索</a></li>
 						<li class="nav_subitem" id="menu_10"><a class="nav_subtarget" href="<%=basePath %>userAction.do?method=expiredFileList">文件删除</a></li>
 					</ul>
 				</li>

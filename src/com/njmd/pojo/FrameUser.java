@@ -160,5 +160,4 @@ public class FrameUser implements java.io.Serializable {
 	public void setUserState(String userState) {
 		this.userState = userState;
 	}
-
 }

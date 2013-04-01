@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.manager.pub.bean.Page;
+import com.manager.pub.bean.PoliceTypeForm;
 import com.manager.pub.bean.SystemConfig;
 import com.manager.pub.bean.UploadForm;
 import com.manager.pub.util.DateUtils;
@@ -37,15 +38,20 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 		return frameUploadDAO.uploadDetail(uploadId);
 	}
 
+	public List<PoliceTypeForm> policeTypeAll() {
+		// TODO Auto-generated method stub
+		return frameUploadDAO.policeTypeAll();
+	}
+
 	public Page uploadListByTree(String uploadName, String treeId,
 			String parentTreeId, String beginTime, String endTime,
 			String uploadUserId, String fileCreateUserId, String fileStats,
 			String fileRemark, String takeTime_begin, String takeTime_end,
 			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page) {
 		// TODO Auto-generated method stub
 		return frameUploadDAO.uploadListByTree(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, page);
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page);
 	}
 
 	public Page uploadListByAdmin(String uploadName, String treeId,
@@ -53,10 +59,10 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 			String uploadUserId, String fileCreateUserId, String fileStats,
 			String fileRemark, String takeTime_begin, String takeTime_end,
 			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page) {
 		// TODO Auto-generated method stub
 		return frameUploadDAO.uploadListByAdmin(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, page);
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page);
 	}
 
 	@Override
@@ -66,7 +72,7 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 		return frameUploadDAO.uploadListTable(beginTime, endTime, treeId, page);
 	}
 
-	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime, Long useTime) {
+	public int uploadRemark(Long uploadId, String remark, String policeCode, String policeTime, String policeDesc, String takeTime, Long useTime, Long policeType) {
 		// TODO Auto-generated method stub
 		FrameUpload frameUpload = frameUploadDAO.findById(uploadId);
 		frameUpload.setFileRemark(remark);
@@ -75,6 +81,7 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 		frameUpload.setPoliceTime(policeTime);
 		frameUpload.setTakeTime(takeTime);
 		frameUpload.setUseTime(useTime);
+		frameUpload.setPoliceType(policeType);
 		return frameUploadDAO.attachDirty(frameUpload);
 	}
 

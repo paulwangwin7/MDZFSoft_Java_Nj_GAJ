@@ -1064,14 +1064,23 @@ public class ServletAction extends DispatchAction{
 			String police_code = request.getParameter("police_code")==null?"":request.getParameter("police_code");
 			String police_time = request.getParameter("police_time")==null?"":request.getParameter("police_time");
 			String police_desc = request.getParameter("police_desc")==null?"":request.getParameter("police_desc");
+			String police_type = request.getParameter("policeType")==null?"":request.getParameter("policeType");
 			Long useTime = null;
-			if(police_time!="" && take_time!="") {
+			if(!police_time.equals("") && !take_time.equals("")) {
 				useTime = Long.parseLong(DateUtils.timeXJ(take_time, police_time)+"");
 				if(useTime==0) {
 					useTime = null;
 				}
 			}
-			switch(frameUploadBO.uploadRemark(new Long(uploadId), file_remark, police_code, police_time, police_desc, take_time, useTime))
+			Long policeType = null;
+			if(!police_type.equals("")) {
+				try {
+					policeType = new Long(police_type);
+				} catch(Exception ex) {
+					policeType = null;
+				}
+			}
+			switch(frameUploadBO.uploadRemark(new Long(uploadId), file_remark, police_code, police_time, police_desc, take_time, useTime, policeType))
 			{
 				case 0: result.setMsg("上传详情信息设置成功！");userLog(request, "上传详情信息设置成功！");break;
 				case 1 : result.setMsg("上传详情信息设置失败！");result.setRetCode(Constants.ACTION_FAILED);break;
@@ -1310,6 +1319,14 @@ public class ServletAction extends DispatchAction{
 		request.setAttribute("jsonViewStr", getJsonView(result));
 		return mapping.findForward("servletResult");
     }
+
+	public ActionForward policeTypeSelect(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
+		Result result = new Result();//返回结果
+		result.setRetObj(frameUploadBO.policeTypeAll());
+		request.setAttribute("jsonViewStr", getJsonView(result));
+		return mapping.findForward("servletResult");
+	}
 
 	/**
 	 * 用户操作日志添加 222

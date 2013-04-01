@@ -65,6 +65,7 @@
 			<input type="hidden" id="take_time_<%=i %>" value="<%=uploadForm.getTakeTime()==null?"":uploadForm.getTakeTime() %>" />
 			<input type="hidden" id="police_time_<%=i %>" value="<%=uploadForm.getPoliceTime()==null?"":uploadForm.getPoliceTime() %>" />
 			<input type="hidden" id="useTime_<%=i %>" value="<%=uploadForm.getUseTime()==null?"":uploadForm.getUseTime() %>" />
+			<input type="hidden" id="policeType_<%=i %>" value="<%=uploadForm.getPoliceType()==null?"":uploadForm.getPoliceType() %>" />
 		</div>
 	</li>
 	<%
@@ -86,7 +87,7 @@
 		</td>
 	</tr>
 <TR>
-<TD WIDTH=500PX>
+<TD WIDTH=400PX>
 <table width="100%" align="center" border="0">
 	<tr>
 		<td width="20%">
@@ -94,18 +95,18 @@
 		</td>
 		<td>
 			<table>
-				<tr>
+				<tr style="display:none">
 					<td align="right">到达时间</td>
 					<td>：</td>
 					<td id="useTime_"></td>
 				</tr>
 				<tr>
-					<td align="right">文件类型</td>
+					<td align="right">文件类别</td>
 					<td>：</td>
 					<td id="type_"></td>
 				</tr>
 				<tr>
-					<td align="right">上传文件名</td>
+					<td align="right">文&nbsp;件&nbsp;名</td>
 					<td>：</td>
 					<td id="name_"></td>
 				</tr>
@@ -155,15 +156,38 @@
 </table>
 </TD>
 <TD align="left" valign="top">
-<table width="300px">
+<table width="400px">
 <tr>
 <td>
-录制时间：&nbsp;<input name="_take_time_" id="_take_time_" style="width:160px" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly /><br/>
-接警编号：&nbsp;<input name="_police_code_" id="_police_code_" style="width:160px" maxlength="30" /><br/>
-接警时间：&nbsp;<input name="_police_time_" id="_police_time_" style="width:160px" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly /><br/>
-文件备注：&nbsp;<input name="_file_remark_" id="_file_remark_" style="width:160px" maxlength="100" /><br/>
-简要警情：&nbsp;<textarea name="_police_desc_" id="_police_desc_" style="width:200px;height:50px" /></textarea><br/>
-<button type="button" class="blue_mod_btn" onclick="uploadFileRemark()">设 置</button><br/>
+<table>
+<tr>
+<td>视频类型：&nbsp;&nbsp;</td>
+<td><jsp:include page="common/policeType.jsp?noSelect="></jsp:include></td>
+</tr>
+<tr style="display:none">
+<td>录制时间：</td>
+<td><input name="_take_time_" id="_take_time_" style="width:170px" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly /></td>
+</tr>
+<tr>
+<td>接警编号：</td>
+<td><input name="_police_code_" id="_police_code_" style="width:170px" maxlength="30" /></td>
+</tr>
+<tr>
+<td>接警时间：</td>
+<td><input name="_police_time_" id="_police_time_" style="width:170px" /></td>
+</tr>
+<tr>
+<td>文件备注：</td>
+<td><textarea name="_file_remark_" id="_file_remark_" style="width:200px;height:50px" /></textarea></td>
+</tr>
+<tr>
+<td>简要警情及<br/>处警结果：</td>
+<td><textarea name="_police_desc_" id="_police_desc_" style="width:200px;height:50px" /></textarea></td>
+<tr>
+<tr>
+<td colspan="2"><button type="button" class="blue_mod_btn" onclick="uploadFileRemark()">设 置</button></td>
+</tr>
+</table>
 </td>
 </tr>
 </table>
@@ -219,10 +243,41 @@ jQuery(function($) {
 function uploadFileRemark()
 {
 jQuery(function($) {
-	if(($("#_police_desc_").html()).length>2000)
-	{
-		alert('简要警情请将文字保持在2000个字以内！');
+var policeTime = $('#_police_time_').val();
+if(policeTime.length>0)
+{
+	policeTime = policeTime.replace("年","").replace("月","").replace("日","").replace("时","").replace("分","").replace("秒",""); 
+	if(policeTime.length!=14) {
+		alert("请检查您输入的接警时间是否正确！");
 		return;
+	}
+}
+	if($('#policeType').val()=='1') {
+		if($('#_take_time_').val().length=='')
+		{
+			alert('录制时间必须选择');
+			return;
+		}
+		if($('#_police_code_').val().length=='')
+		{
+			alert('接警编号必须填写');
+			return;
+		}
+		if($('#_police_time_').val().length=='')
+		{
+			alert('接警时间必须选择');
+			return;
+		}
+		if(($("#_file_remark_").html()).length>1000)
+		{
+			alert('文件备注请将文字保持在1000个字以内！');
+			return;
+		}
+		if(($("#_police_desc_").html()).length>2000)
+		{
+			alert('简要警情请将文字保持在2000个字以内！');
+			return;
+		}
 	}
 	$.ajax({
 		url:contextPath()+'servletAction.do?method=uploadFileRemark',
@@ -230,7 +285,7 @@ jQuery(function($) {
 		dataType: 'json',
 		cache: false,
 		async: false,
-		data: {"fileId":$("#_fileId_").val(),"file_remark":$("#_file_remark_").val(),"police_code":$("#_police_code_").val(),"police_time":$("#_police_time_").val(),"police_desc":$("#_police_desc_").val(),"_take_time_":$("#_take_time_").val()},
+		data: {"fileId":$("#_fileId_").val(),"file_remark":$("#_file_remark_").val(),"police_code":$("#_police_code_").val(),"police_time":policeTime,"police_desc":$("#_police_desc_").val(),"_take_time_":$("#_take_time_").val(),"policeType":$("#policeType").val()},
 		success:function(res){
 			if(res != null)
 			{
@@ -262,6 +317,7 @@ jQuery(function($) {
  */
 function showUploadDetail(forIndex, editAction) {
 jQuery(function($) {
+	$("#policeType").find("option[value='"+$('#policeType_'+forIndex).val()+"']").attr("selected",true);
 	$("#useTime_").html($("#useTime_"+forIndex).val());
 	if($("#useTime_").html()!="") {
 		$("#useTime_").html($("#useTime_").html()+" 分钟");
@@ -277,7 +333,10 @@ jQuery(function($) {
 	$("#state_").html($("#state_"+forIndex).val());
 	$("#stats_").html($("#stats_"+forIndex).val());
 	$("#_file_remark_").val($("#_file_remark_"+forIndex).val());
-	$("#_police_time_").val($("#police_time_"+forIndex).val());
+	var policeTime = $("#police_time_"+forIndex).val();
+	if(policeTime.length==14) {
+		$("#_police_time_").val(policeTime.substring(0,4)+"年"+policeTime.substring(4,6)+"月"+policeTime.substring(6,8)+"日"+policeTime.substring(8,10)+"时"+policeTime.substring(10,12)+"分"+policeTime.substring(12,14)+"秒");
+	}
 	$("#_police_code_").val($("#police_code_"+forIndex).val());
 	$("#_police_desc_").html($("#police_desc_"+forIndex).val());
 	//$("#_file_remark_").val($("#_file_remark_"+forIndex).val());

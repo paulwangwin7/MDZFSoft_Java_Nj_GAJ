@@ -31,6 +31,7 @@
 	<mapping resource="com/njmd/pojo/FrameTree.hbm.xml" />
 	<mapping resource="com/njmd/pojo/FrameUpload.hbm.xml" />
 	<mapping resource="com/njmd/pojo/FrameUrl.hbm.xml" />
+	<mapping resource="com/njmd/pojo/FramePoliceType.hbm.xml" />
 </session-factory>
 
 </hibernate-configuration>

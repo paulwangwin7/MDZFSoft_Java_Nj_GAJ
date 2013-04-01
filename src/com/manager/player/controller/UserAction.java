@@ -505,7 +505,7 @@ public class UserAction extends DispatchAction {
 		if(uploadSuccess)
 		{
 			UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
-
+			
 			if(userForm.getUserId()==0) {
 				request.setAttribute("tree_root_list", sysDAO.remarkFormList("FRAME_TREE"));
 				request.setAttribute(Constants.JSP_TREE_LIST, frameTreeBO.getTreeList());
@@ -591,6 +591,7 @@ public class UserAction extends DispatchAction {
 			String policeDesc = request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc");
 			String useTime_begin = request.getParameter("useTime_begin")==null?"":request.getParameter("useTime_begin").trim();
 			String useTime_end = request.getParameter("useTime_end")==null?"":request.getParameter("useTime_end").trim();
+			String police_type = request.getParameter("policeType")==null?"":request.getParameter("policeType");
 			if(useTime_begin!=null) {
 				try {
 					useTime_begin = Integer.parseInt(useTime_begin)+"";
@@ -605,7 +606,14 @@ public class UserAction extends DispatchAction {
 					useTime_end = "";
 				}
 			}
-			
+			Long policeType = null;
+			if(!police_type.equals("")) {
+				try {
+					policeType = new Long(police_type);
+				} catch(Exception ex) {
+					policeType = null;
+				}
+			}
 			int pagecute = 1;
 			try
 			{
@@ -623,7 +631,7 @@ public class UserAction extends DispatchAction {
 				}
 				if(userForm.getUserId()==0) {
 					request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-							takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, new Page(pagecute, 10)));
+							takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10)));
 					return mapping.findForward("uploadFileShow");
 				} else {
 					if(parentTreeId!=-1)
@@ -632,12 +640,12 @@ public class UserAction extends DispatchAction {
 							parentTreeId = userForm.getTreeId();
 						}
 						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByTree(uploadName, userForm.getTreeId()+"", parentTreeId+"", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, new Page(pagecute, 10)));
+								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10)));
 						return mapping.findForward("uploadFileShow");
 					}
 					else {
 						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, new Page(pagecute, 10)));
+								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10)));
 						return mapping.findForward("uploadFileShow");
 					}
 				}
@@ -721,6 +729,7 @@ public class UserAction extends DispatchAction {
 		if(showSuccess)
 		{
 			request.setAttribute("fileDetail", frameUploadBO.uploadDetail(Long.parseLong(request.getParameter("uploadId"))));
+			request.setAttribute("policeType", frameUploadBO.policeTypeAll());
 			return mapping.findForward("fileDetail");
 		}
 		request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
