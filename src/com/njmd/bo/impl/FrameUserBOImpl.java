@@ -120,4 +120,24 @@ public class FrameUserBOImpl implements FrameUserBO {
 	public void setFrameUserDAO(FrameUserDAO frameUserDAO) {
 		this.frameUserDAO = frameUserDAO;
 	}
+
+	@Override
+	public Page getUserListByTree(UserForm user, String queryTreeId,
+			Page page) {
+		// TODO Auto-generated method stub
+		FrameUser instance = new FrameUser();
+		if(user.getUserName()!=null) {
+			instance.setUserName(user.getUserName());
+		}
+		if(user.getUserCode()!=null) {
+			instance.setUserCode(user.getUserCode());
+		}
+		if(user.getSex()!=null) {
+			instance.setSex(user.getSex());
+		}
+		if(user.getTreeId()>0) {
+			instance.setTreeId(user.getTreeId());
+		}
+		return frameUserDAO.getUserListByTree(instance, queryTreeId, page);
+	}
 }

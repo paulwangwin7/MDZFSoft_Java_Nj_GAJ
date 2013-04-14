@@ -20,6 +20,7 @@ public interface FrameUserBO {
 	 * @return Page
 	 */
 	public Page getUserList(UserForm userForm, String queryTreeId, Page page);
+	public Page getUserListByTree(UserForm userForm, String queryTreeId, Page page);
 	/**
 	 * 查询用户列表
 	 * 

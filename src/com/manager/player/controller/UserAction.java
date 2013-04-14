@@ -325,7 +325,8 @@ public class UserAction extends DispatchAction {
 		userForm.setUserCode(request.getParameter("user_code")==null?"":request.getParameter("user_code"));
 		String queryTreeId = request.getParameter("query_treeId")==null?"":request.getParameter("query_treeId");
 		if(uf.getUserId()==0) {
-			request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserList(new Page(pagecute, 5)));
+//			request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserList(new Page(pagecute, 5)));
+			request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserListByTree(userForm, queryTreeId, new Page(pagecute, 5)));
 		} else {
 			request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserList(userForm, queryTreeId, new Page(pagecute, 5)));
 		}

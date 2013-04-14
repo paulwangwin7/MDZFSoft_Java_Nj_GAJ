@@ -15,6 +15,7 @@ closeChooseTree 关闭选择部门
 selectUser 选择警员
 closeSelectUser 关闭选择警员
 selectDateTime 选择日期时间
+policeTypeSelect
 *****************/
 
 /**
@@ -472,5 +473,39 @@ function noticeDetailShow(assignmentId)
 jQuery(function($) {
 	$('#noticeDetailFrame').attr('src', contextPath()+'/userAction.do?method=noticeDetail&noticeId='+assignmentId);
 	$.weeboxs.open('#noticeDetailShow', {title:'公告详情', contentType:'selector', width:'600', height:'440'});
+});
+}
+
+function policeTypeSelect(optionId)
+{
+jQuery(function($) {
+	$.ajax({
+		url:contextPath()+"/servletAction.do?method=policeTypeSelect&timer="+Math.random(),
+		type: 'post',
+		dataType: 'json',
+		cache: false,
+		async: false,
+		data: {},
+		success:function(res){
+			if(res != null)
+			{
+				//alert(res.retObj);
+				for(i=0; i<res.retObj.length; i++)
+				{
+					if(optionId == res.retObj[i].typeId) {
+						$('#policeType').append("<option value='"+res.retObj[i].typeId+"' selected>"+res.retObj[i].typeName+"</option>");
+					} else {
+						$('#policeType').append("<option value='"+res.retObj[i].typeId+"'>"+res.retObj[i].typeName+"</option>");
+					}
+				}
+			}
+			else{
+				//
+			}
+		},
+		error:function(){
+			//
+		}
+	});
 });
 }
