@@ -42,7 +42,6 @@ var nowMonth = "<%=DateUtils.getChar8().substring(4,6)%>";
 							<li class="tab_item current" onclick="showFrame('1')">
 								派出所统计
 							</li>
-							<li class="tab_item" onclick="showFrame('2')">中队统计</li>
 							<li class="tab_item" onclick="showFrame('3')">警员统计</li>
 							<li class="tab_item" onclick="showFrame('4')">视频分类</li>
 							<li class="tab_item" onclick="showFrame('5')">规范化考评</li>
@@ -110,91 +109,6 @@ jQuery(function($) {
 							<li class="tab_conitem">
 							<div class="gray_bor_bg">
 								<h5 class="gray_blod_word">组合条件搜索</h5>
-								中队统计
-								<div class="search_form">
-<form id="childTreeForm" action="<%=basePath %>servletAction.do?method=uploadLog_byTree2" method="post" onsubmit="return tree2Sub()" target="childTree">
-<input type="hidden" name="tree2_treeName" value="test"/>
-									<div class="mt_10">
-									<label>选择部门:</label>
-									<select id="req_tree2_treeId" name="tree2_treeId">
-<%
-	List list_totalTree = (List)request.getAttribute(Constants.JSP_TREE_LIST);
-	if(list_totalTree!=null && list_totalTree.size()>0)
-	{
-		for(int i=0; i<list_totalTree.size(); i++)//一级部门循环
-		{
-			TreeForm rootTreeForm = (TreeForm)((List)(list_totalTree.get(i))).get(0);
-			List<TreeForm> treeFormList = ((List<TreeForm>)((List)(list_totalTree.get(i))).get(1));
-%>
-											<option value="<%=rootTreeForm.getTreeId() %>"><%=rootTreeForm.getTreeName() %></option>
-<%
-		}
-	}
-%>
-									</select>
-									<br/>
-									<select style="width:144px" name="tree2_searchType" id="req_tree2_searchType">
-										<option value="1">按年统计</option>
-										<option value="2">按月统计</option>
-									</select>
-									<br/>
-									<select id="req_tree2_year" name="tree2_year" class="input_79x19"></select>
-									<select id="req_tree2_month" name="tree2_month" class="input_79x19" style="display:none"></select>
-									<br/>
-									<input type="submit" class="blue_mod_btn" value="统&nbsp;计" />
-</form>
-<script>
-//数据初始化
-jQuery(function($) {
-	for(i=0; i<yearArray.length; i++)
-	{
-		var appendStr = "<option value='"+yearArray[i]+"'";
-		if((i+1)==yearArray.length)
-		{
-			appendStr += " selected";
-		}
-		appendStr += ">"+yearArray[i]+"</option>";
-		$("#req_tree2_year").append(appendStr);
-	}
-	for(i=1; i<=12; i++)
-	{
-		var monthStr = (i<10)?("0"+i):i;
-		var appendStr = "<option value='"+monthStr+"'";
-		if(monthStr==nowMonth)
-		{
-			appendStr += " selected";
-		}
-		appendStr += ">"+monthStr+"</option>";
-		$("#req_tree2_month").append(appendStr);
-	}
-
-	$("#req_tree2_searchType").change(function(){
-		if($(this).val()=="1")
-		{
-			$("#req_tree2_month").css("display", "none");
-		}
-		else
-		{
-			$("#req_tree2_month").css("display", "block");
-		}
-	});
-});
-
-function tree2Sub()
-{
-jQuery(function($) {
-	hideObj("analysisUploadMsg");
-});
-return true;
-}
-</script>
-									</div>
-								</div>
-							</div>
-							</li>
-							<li class="tab_conitem">
-							<div class="gray_bor_bg">
-								<h5 class="gray_blod_word">组合条件搜索</h5>
 <div class="error msg" id="analysisUploadMsg" style="display:none" onclick="hideObj('analysisUploadMsg')">Message if login failed</div>
 								警员统计
 <form id="byUserForm" action="<%=basePath %>servletAction.do?method=uploadLog_byUser" method="post" target="personal">
@@ -228,6 +142,7 @@ return true;
 										<select name="query_treeId" class="input_130x20">
 											<option value=""> -- </option>
 <%
+	List list_totalTree = (List)request.getAttribute(Constants.JSP_TREE_LIST);
 	if(list_totalTree!=null && list_totalTree.size()>0)
 	{
 		for(int i=0; i<list_totalTree.size(); i++)//一级部门循环
