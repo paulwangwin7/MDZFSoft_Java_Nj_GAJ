@@ -16,10 +16,12 @@ import com.njmd.pojo.FrameUpload;
 public class FrameUploadBOImpl implements FrameUploadBO {
 	private FrameUploadDAO frameUploadDAO;
 
-	public Page mineUploadList(String treeId, String parentTreeId,
-			String uploadUserId, Page page) {
+	public Page mineUploadList(String beginTime,String endTime,String fileRemark,String policeCode,
+			String policeDesc,String nullRemark,String nullPoliceCode,String nullPoliceDesc,
+			String treeId, String parentTreeId, String uploadUserId, Page page) {
 		// TODO Auto-generated method stub
-		return frameUploadDAO.mineUploadList(treeId, parentTreeId, uploadUserId, page);
+		return frameUploadDAO.mineUploadList(beginTime,endTime,fileRemark,policeCode,policeDesc,nullRemark,nullPoliceCode,nullPoliceDesc,
+				treeId, parentTreeId, uploadUserId, page);
 	}
 
 	public int uploadDel(List<UploadForm> uploadList, boolean deleteStats) {
@@ -48,10 +50,12 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 			String uploadUserId, String fileCreateUserId, String fileStats,
 			String fileRemark, String takeTime_begin, String takeTime_end,
 			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Long policeType, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page,
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
 		// TODO Auto-generated method stub
 		return frameUploadDAO.uploadListByTree(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page);
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page,
+				showTree, nullRemark, nullPoliceCode, nullPoliceDesc);
 	}
 
 	public Page uploadListByAdmin(String uploadName, String treeId,
@@ -59,10 +63,11 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 			String uploadUserId, String fileCreateUserId, String fileStats,
 			String fileRemark, String takeTime_begin, String takeTime_end,
 			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Long policeType, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page,
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
 		// TODO Auto-generated method stub
 		return frameUploadDAO.uploadListByAdmin(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page);
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page, showTree, nullRemark, nullPoliceCode, nullPoliceDesc);
 	}
 
 	@Override
@@ -140,6 +145,25 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 		list.add(statsList);
 		list.add(unStatsList);
 		return list;
+	}
+
+	@Override
+	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd) {
+		// TODO Auto-generated method stub
+		return frameUploadDAO.statistic(treeId, beginTime, endTime, useTimeBegin, useTimeEnd);
+	}
+
+	@Override
+	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, Page page) {
+		// TODO Auto-generated method stub
+//		return frameUploadDAO.statistic(treeId, beginTime, endTime, useTimeBegin, useTimeEnd);
+		return frameUploadDAO.statisticDetail(treeId, typeId, beginTime, endTime, useTimeBegin, useTimeEnd, page);
+	}
+
+	@Override
+	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, Long treeId, Long policeType) {
+		// TODO Auto-generated method stub
+		return frameUploadDAO.contrast(uploadTimeBegin, uploadTimeEnd, treeId, policeType);
 	}
 
 	public List<UploadForm> expiredSysDekList(int expiredDays) {

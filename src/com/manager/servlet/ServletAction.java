@@ -176,7 +176,7 @@ public class ServletAction extends DispatchAction{
 			userForm.setLoginName("系统管理员");
 			userForm.setUserName("系统管理员");
 			userForm.setUserCode("000000");
-			userForm.setTreeNameStr("交警总队");
+			userForm.setTreeNameStr("建邺分局");
 			userForm.setRoleId(0);
 			userForm.setTreeId(0);
 			userForm.setSex("M");

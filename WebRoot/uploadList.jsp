@@ -1,6 +1,9 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="com.manager.pub.util.*, com.manager.pub.bean.*" %>
 <%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+
 	List<UploadForm> uploadFormList = null;
 	int thispagecute = 1;
 	try
@@ -12,7 +15,50 @@
 	catch(Exception ex)
 	{
 	}
+	
+String nullRemarkCheck = request.getParameter("nullRemark")==null?"":(request.getParameter("nullRemark").equals("")?"":"checked");
+String nullPoliceCodeCheck = request.getParameter("nullPoliceCode")==null?"":(request.getParameter("nullPoliceCode").equals("")?"":"checked");
+String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(request.getParameter("nullPoliceDesc").equals("")?"":"checked");
 %>
+<div id="hiddenObjForm">
+<input type="hidden" id="beginTime_" value="<%=request.getParameter("beginTime")==null?"":request.getParameter("beginTime") %>"/>
+<input type="hidden" id="endTime_" value="<%=request.getParameter("endTime")==null?"":request.getParameter("endTime") %>"/>
+<input type="hidden" id="fileRemark_" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>"/>
+<input type="hidden" id="policeCode_" value="<%=request.getParameter("policeCode")==null?"":request.getParameter("policeCode") %>"/>
+<input type="hidden" id="policeDesc_" value="<%=request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc") %>"/>
+<input type="hidden" id="nullRemark_" value="<%=request.getParameter("nullRemark")==null?"":request.getParameter("nullRemark") %>"/>
+<input type="hidden" id="nullPoliceCode_" value="<%=request.getParameter("nullPoliceCode")==null?"":request.getParameter("nullPoliceCode") %>"/>
+<input type="hidden" id="nullPoliceDesc_" value="<%=request.getParameter("nullPoliceDesc")==null?"":request.getParameter("nullPoliceDesc") %>"/>
+</div>
+
+<div class="gray_bor_bg">
+<div class="search_form">
+<form action="<%=basePath %>userAction.do?method=uploadFileShow" method="post">
+<p>
+上传时间:&nbsp;
+<input type="text" id="beginTime" name="beginTime" value="<%=request.getParameter("beginTime")==null?"":request.getParameter("beginTime") %>" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
+&nbsp;&nbsp;-&nbsp;&nbsp;
+<input type="text" id="endTime" name="endTime" value="<%=request.getParameter("endTime")==null?"":request.getParameter("endTime") %>" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
+</p>
+<p>
+文件备注:&nbsp;
+<input type="text" name="fileRemark" id="fileRemark" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>">
+<input type="checkbox" value="1" name="nullRemark" id="nullRemark" onclick="isObjNull(this, 'fileRemark')" <%=nullRemarkCheck %>/>为空
+</p>
+<p>
+接警编号:&nbsp;
+<input id="policeCode" type="text" name="policeCode" value="<%=request.getParameter("policeCode")==null?"":request.getParameter("policeCode") %>"/>
+<input type="checkbox" value="1" name="nullPoliceCode" id="nullPoliceCode" onclick="isObjNull(this, 'policeCode')" <%=nullPoliceCodeCheck %>/>为空
+</p>
+<p>
+简要警情:&nbsp;
+<input id="policeDesc" type="text" name="policeDesc" value="<%=request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc") %>"/>
+<input type="checkbox" value="1" name="nullPoliceDesc" id="nullPoliceDesc" onclick="isObjNull(this, 'policeDesc')" <%=nullPoliceDescCheck %>/>为空
+</p>
+<input type="button" class="blue_mod_btn" value="检&nbsp;索" onclick="formsubmit()"/>
+</form>
+</div>
+</div>
 <div class=" mt_10">
 	<ul class="upload_list">
 	<%
@@ -162,7 +208,7 @@
 <table>
 <tr>
 <td>视频类型：&nbsp;&nbsp;</td>
-<td><jsp:include page="common/policeType.jsp?noSelect="></jsp:include></td>
+<td><jsp:include page="common/policeType.jsp"></jsp:include></td>
 </tr>
 <tr style="display:none">
 <td>录制时间：</td>
@@ -197,7 +243,7 @@
 </div>
 
 <div class="tablefooter clearfix">
-<jsp:include page="common/page.jsp?function=mineUpload"></jsp:include>
+<jsp:include page="common/page.jsp?function=mineUpload_"></jsp:include>
 </div>
 <form name="uploadFileStatsForm" id="uploadFileStatsForm" action="userAction.do?method=uploadFileStats" method="post">
 <input type="hidden" name="fileId" id="_fileId_" />
@@ -253,11 +299,11 @@ if(policeTime.length>0)
 	}
 }
 	if($('#policeType').val()=='1') {
-		if($('#_take_time_').val().length=='')
-		{
-			alert('录制时间必须选择');
-			return;
-		}
+		//if($('#_take_time_').val().length=='')
+		//{
+		//	alert('录制时间必须选择');
+		//	return;
+		//}
 		if($('#_police_code_').val().length=='')
 		{
 			alert('接警编号必须填写');
@@ -347,5 +393,28 @@ jQuery(function($) {
 	$("#_fileId_").val($("#fileId_"+forIndex).val());
 	showObj("uploadDetail");
 });
+}
+
+function isObjNull(obj,objName){
+jQuery(function($) {
+	if(obj.checked){
+		$('#'+objName).val('');
+	}
+});
+}
+
+function formsubmit(){
+jQuery(function($) {
+	var nullRemarkStr = $('#nullRemark').attr('checked')?'1':'';
+	var nullPoliceCodeStr = $('#nullPoliceCode').attr('checked')?'1':'';
+	var nullPoliceDescStr = $('#nullPoliceDesc').attr('checked')?'1':'';
+	mineUpload('1', $('#beginTime').val(), $('#endTime').val(), $('#fileRemark').val(), $('#policeCode').val(), $('#policeDesc').val(), nullRemarkStr, nullPoliceCodeStr, nullPoliceDescStr);
+});
+}
+function mineUpload_(pagecute){
+	var nullRemarkStr = $('#nullRemark_').val();
+	var nullPoliceCodeStr = $('#nullPoliceCode_').val();
+	var nullPoliceDescStr = $('#nullPoliceDesc_').val();
+	mineUpload(pagecute, $('#beginTime_').val(), $('#endTime_').val(), $('#fileRemark_').val(), $('#policeCode_').val(), $('#policeDesc_').val(), nullRemarkStr, nullPoliceCodeStr, nullPoliceDescStr);
 }
 </script>

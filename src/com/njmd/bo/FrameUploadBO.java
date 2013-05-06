@@ -102,6 +102,8 @@ public interface FrameUploadBO {
 	 * @param page
 	 * 			pagecute 当前页 默认第1页
 	 *			pageline 每页行数 默认10行
+	 * @param showTree			文件所属部门
+	 * @param checkNull			文件备注和处警内容为空
 	 * @return
 	 */
 	public Page uploadListByTree(String uploadName, String treeId, String parentTreeId,
@@ -109,7 +111,8 @@ public interface FrameUploadBO {
 								String fileCreateUserId, String fileStats, String fileRemark,
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
-								String useTime_begin, String useTime_end, Long policeType, Page page);
+								String useTime_begin, String useTime_end, Long policeType, Page page,
+								String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc);
 
 	/**
 	 * 管理员文件查询
@@ -131,6 +134,8 @@ public interface FrameUploadBO {
 	 * @param page
 	 * 			pagecute 当前页 默认第1页
 	 *			pageline 每页行数 默认10行
+	 * @param showTree			文件所属部门
+	 * @param checkNull			文件备注和处警内容为空
 	 * @return
 	 */
 	public Page uploadListByAdmin(String uploadName, String treeId, String parentTreeId,
@@ -138,7 +143,8 @@ public interface FrameUploadBO {
 								String fileCreateUserId, String fileStats, String fileRemark,
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
-								String useTime_begin, String useTime_end, Long policeType, Page page);
+								String useTime_begin, String useTime_end, Long policeType, Page page,
+								String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc);
 
 	/**
 	 * 上传列表数据统计
@@ -162,7 +168,9 @@ public interface FrameUploadBO {
 	 *			pageline 每页行数 默认10行
 	 * @return
 	 */
-	public Page mineUploadList(String treeId, String parentTreeId, String uploadUserId, Page page);
+	public Page mineUploadList(String beginTime,String endTime,String fileRemark,String policeCode,
+			String policeDesc,String nullRemark,String nullPoliceCode,String nullPoliceDesc,
+			String treeId, String parentTreeId, String uploadUserId, Page page);
 
 	/**
 	 * 过期文件列表（系统预删除的过期文件，所以给出的均为非加星的文件）
@@ -185,4 +193,29 @@ public interface FrameUploadBO {
 	 * @return
 	 */
 	public List<PoliceTypeForm> policeTypeAll();
+
+	/**
+	 * 20130417需求1.3
+	 * 视频分类统计
+	 * @param treeId
+	 * @param beginTime
+	 * @param endTime
+	 * @param useTimeBegin
+	 * @param useTimeEnd
+	 * @param response
+	 * @return
+	 */
+	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd);
+
+	/**
+	 * 20130417需求1.8
+	 * 110接处警比对
+	 * @param uploadTime
+	 * @param treeId
+	 * @param policeType
+	 * @return
+	 */
+	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, Long treeId, Long policeType);
+
+	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, Page page);
 }

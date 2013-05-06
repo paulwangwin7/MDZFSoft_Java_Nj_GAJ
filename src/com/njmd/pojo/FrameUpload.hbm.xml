@@ -120,7 +120,7 @@
         </property>
         <property name="policeType" type="java.lang.Long">
             <column name="POLICE_TYPE" precision="4" scale="0">
-                <comment>接警用时（单位：分钟）</comment>
+                <comment>接警类型</comment>
             </column>
         </property>
     </class>

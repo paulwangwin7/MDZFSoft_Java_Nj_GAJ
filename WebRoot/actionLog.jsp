@@ -73,7 +73,7 @@ $(document).ready(function(){
 									<td class="textc"><%=logForm.getUserCode() %></td>
 									<td class="textc"><%=logForm.getIpAddr() %></td>
 									<td class="textc"><%=DateUtils.formatChar14Time(logForm.getCreateTime()) %></td>
-									<td class="textc"><%=logForm.getTreeName()==null?"交警大队总部":logForm.getTreeName() %></td>
+									<td class="textc"><%=logForm.getTreeName()==null?"建邺分局":logForm.getTreeName() %></td>
 									<td class="textc"><%=logForm.getRoleName()==null?"admin":logForm.getRoleName() %></td>
 									<td class="textc"><%=logForm.getLogDesc() %></td>
 								</tr>

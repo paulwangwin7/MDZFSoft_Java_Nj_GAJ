@@ -39,7 +39,7 @@ if(request.getAttribute("uploadLogList_ByTree1")!=null)
 					margin: [50, 150, 60, 80]
 				},
 				title: {
-					text: '大队上传文件<%=text%>报 <%=session_tree1_searchType==1?request.getParameter("tree1_year"):request.getParameter("tree1_year")+"-"+request.getParameter("tree1_month")%>',
+					text: '派出所上传文件<%=text%>报 <%=session_tree1_searchType==1?request.getParameter("tree1_year"):request.getParameter("tree1_year")+"-"+request.getParameter("tree1_month")%>',
 					style: {
 						margin: '10px 100px 0 0' // center it
 					}

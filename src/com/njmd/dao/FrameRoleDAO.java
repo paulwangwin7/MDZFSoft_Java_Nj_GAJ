@@ -301,7 +301,7 @@ public class FrameRoleDAO extends BaseHibernateDAO {
 		Session session = getSession();
 		try {
 			session.clear();
-			String queryString = "from FrameRole as model order by model.createTime desc";
+			String queryString = "from FrameRole as model where model.roleState='A' order by model.createTime desc";
 			Query queryObject = session.createQuery(queryString);
 			if(page!=null) {
 				page.setTotal(queryObject.list().size());

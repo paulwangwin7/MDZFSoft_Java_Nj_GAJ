@@ -103,7 +103,7 @@ jQuery(function($) {
 	<a style="color:#d1d1d1">尾页</a>
 <%
 	}
-%>
+%>&nbsp;&nbsp;共计记录：<%=pageRst.getTotal() %>条
 	&nbsp;&nbsp;&nbsp;&nbsp;
 <script>
 jQuery(function($) {

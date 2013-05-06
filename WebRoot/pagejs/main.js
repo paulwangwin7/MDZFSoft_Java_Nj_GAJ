@@ -26,7 +26,7 @@ jQuery(function($) {
  * 我的上传
  * @param showPage 显示第几页
  */
-function mineUpload(showPage) {
+function mineUpload(showPage, beginTime, endTime, fileRemark, policeCode, policeDesc, nullRemark, nullPoliceCode, nullPoliceDesc) {
 jQuery(function($) {
 	$("#mainTitle").html("我的上传");
 	var page = 1;
@@ -34,7 +34,25 @@ jQuery(function($) {
 	{
 		page = showPage;
 	}
-	$("#mainContext").load(contextPath()+"/userAction.do?method=uploadFileShow&pageCute="+page+"&timer="+Math.random());
+	if(beginTime==null){beginTime=''};
+	if(endTime==null){endTime=''};
+	if(fileRemark==null){fileRemark=''};
+	if(policeCode==null){policeCode=''};
+	if(policeDesc==null){policeDesc=''};
+	if(nullRemark==null){nullRemark=''};
+	if(nullPoliceCode==null){nullPoliceCode=''};
+	if(nullPoliceDesc==null){nullPoliceDesc=''};
+	var loadUrl = contextPath()+"/userAction.do?method=uploadFileShow&pageCute="+page;
+		loadUrl+= "&beginTime="+beginTime;
+		loadUrl+= "&endTime="+endTime;
+		loadUrl+= "&fileRemark="+fileRemark;
+		loadUrl+= "&policeCode="+policeCode;
+		loadUrl+= "&policeDesc="+policeDesc;
+		loadUrl+= "&nullRemark="+nullRemark;
+		loadUrl+= "&nullPoliceCode="+nullPoliceCode;
+		loadUrl+= "&nullPoliceDesc="+nullPoliceDesc;
+		loadUrl+= "&timer="+Math.random()
+	$("#mainContext").load(encodeURI(loadUrl));
 });
 }
 

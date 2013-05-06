@@ -1,5 +1,25 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="com.manager.pub.bean.*, com.manager.pub.util.*, java.util.*" %>
+<%!
+public boolean canDown(Object roleFormSession) {
+	boolean can = false;
+	RoleForm roleForm = null;
+	if(roleFormSession!=null) {
+		try {
+			roleForm = (RoleForm)roleFormSession;
+			String[] urls = roleForm.getUrlIdList().split(",");
+			for(String url: urls) {
+				if(url.equals("12")){//下载权限
+					can = true;
+				}
+			}
+		} catch(Exception ex) {
+			can = false;
+		}
+	}
+	return can;
+}
+%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -19,6 +39,10 @@ String createUserName = request.getParameter("uploadCreate")==null?"":request.ge
 
 
 String fileStatsVal = request.getParameter("fileStats")==null?"":request.getParameter("fileStats");
+
+String nullRemarkCheck = request.getParameter("nullRemark")==null?"":(request.getParameter("nullRemark").equals("")?"":"checked");
+String nullPoliceCodeCheck = request.getParameter("nullPoliceCode")==null?"":(request.getParameter("nullPoliceCode").equals("")?"":"checked");
+String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(request.getParameter("nullPoliceDesc").equals("")?"":"checked");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -61,7 +85,8 @@ $(document).ready(function(){
 								<div class="mt_10">
 								<label>文&nbsp;件&nbsp;名:</label>
 									<input type="text" class="input_168x19" name="uploadName" id="uploadName" value="<%=request.getParameter("uploadName")==null?"":request.getParameter("uploadName") %>" />&nbsp;&nbsp;&nbsp;&nbsp;
-								<label>文件备注:</label><input class="input_168x19" type="text" name="fileRemark" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>" />
+								<label>文件备注:</label><input class="input_168x19" type="text" id="fileRemark" name="fileRemark" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>" />
+								<input type="checkbox" value="1" name="nullRemark" onclick="isObjNull(this, 'fileRemark')" <%=nullRemarkCheck %>/>为空
 								</div>
 								<div class="mt_10">
 								<label>到达时间:</label>
@@ -75,10 +100,12 @@ $(document).ready(function(){
 								<div class="mt_10">
 								<label>接警编号:</label>
 									<input class="input_386x25" id="policeCode" type="text" name="policeCode" value="<%=request.getParameter("policeCode")==null?"":request.getParameter("policeCode") %>"/>
+									<input type="checkbox" value="1" name="nullPoliceCode" onclick="isObjNull(this, 'policeCode')" <%=nullPoliceCodeCheck %>/>为空
 								</div>
 								<div class="mt_10">
 								<label>简要警情:</label>
 									<input class="input_386x25" id="policeDesc" type="text" name="policeDesc" value="<%=request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc") %>"/>
+									<input type="checkbox" value="1" name="nullPoliceDesc" onclick="isObjNull(this, 'policeDesc')" <%=nullPoliceDescCheck %>/>为空
 								</div>
 								<%
 									if(userForm!=null && userForm.getUserId()==0) {
@@ -103,6 +130,33 @@ $(document).ready(function(){
 										<option value="1"<%=fileStatsVal.equals("1")?"selected":""%>>重要</option>
 									</select>
 								<!--label>文件备注:</label><input type="text" class="input_79x19" name="fileRemark" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>"/-->
+								</div>
+								<div class="mt_10">
+								<label>所属部门：</label>
+									<select name="treeId" class="input_130x20">
+										<option value=""> -- </option>
+<%
+	String treeId = request.getParameter("treeId")==null?"":request.getParameter("treeId");
+	List list_totalTree = (List)request.getAttribute(Constants.JSP_TREE_LIST);
+	if(list_totalTree!=null && list_totalTree.size()>0)
+	{
+		for(int i=0; i<list_totalTree.size(); i++)//一级部门循环
+		{
+			TreeForm rootTreeForm = (TreeForm)((List)(list_totalTree.get(i))).get(0);
+			List<TreeForm> treeFormList = ((List<TreeForm>)((List)(list_totalTree.get(i))).get(1));
+%>
+										<option value="<%=rootTreeForm.getTreeId() %>"<%=treeId.equals(rootTreeForm.getTreeId()+"")?" selected":"" %>><%=rootTreeForm.getTreeName() %></option>
+<%
+			for(int j=0; j<treeFormList.size(); j++)//二级部门循环
+			{
+%>
+										<option value="<%=treeFormList.get(j).getTreeId() %>"<%=treeId.equals(treeFormList.get(j).getTreeId()+"")?" selected":"" %>>&nbsp;<%=treeFormList.get(j).getTreeName() %></option>
+<%
+			}
+		}
+	}
+%>
+									</select>
 								</div>
 								<div class="mt_10">
 								<label>视频类型：</label>
@@ -232,6 +286,12 @@ $(document).ready(function(){
 											if(userForm!=null && userForm.getUserId()==0) {
 										%>
 										<a href="javascript:detailShow('<%=uploadForm.getUploadId() %>')" class="blue_mod_btn fr" style="width:30px">详情</a>
+										<%
+											}
+										%>
+										<%
+											if(canDown(request.getSession().getAttribute(Constants.SESSION_ROLE_FORM))) {
+										%>
 										<a href="<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>" target="_blank" class="blue_mod_btn fr" style="width:30px">下载</a>
 										<%
 											}
@@ -278,7 +338,11 @@ $(document).ready(function(){
 							%>
 							</ul>
 <form action="<%=basePath %>userAction.do?method=filePlayShow" method="post" id="hidUploadForm">
+<input type="hidden" name="nullRemark" value="<%=request.getParameter("nullRemark")==null?"":request.getParameter("nullRemark") %>" />
+<input type="hidden" name="nullPoliceCode" value="<%=request.getParameter("nullPoliceCode")==null?"":request.getParameter("nullPoliceCode") %>" />
+<input type="hidden" name="nullPoliceDesc" value="<%=request.getParameter("nullPoliceDesc")==null?"":request.getParameter("nullPoliceDesc") %>" />
 <input type="hidden" name="pageCute" id="uploadManager_pageCute" />
+<input type="hidden" name="treeId" value="<%=request.getParameter("treeId")==null?"":request.getParameter("treeId") %>" />
 <input type="hidden" name="uploadName" value="<%=request.getParameter("uploadName")==null?"":request.getParameter("uploadName") %>" />
 <input type="hidden" name="fileRemark" value="<%=request.getParameter("fileRemark")==null?"":request.getParameter("fileRemark") %>" />
 <input type="hidden" name="beginTime" value="<%=request.getParameter("beginTime")==null?"":request.getParameter("beginTime") %>" />
@@ -362,7 +426,7 @@ type="application/x-shockwave-flash" width="640" height="480">
 										<select name="query_treeId" class="input_130x20">
 											<option value=""> -- </option>
 <%
-	List list_totalTree = (List)request.getAttribute(Constants.JSP_TREE_LIST);
+	//List list_totalTree = (List)request.getAttribute(Constants.JSP_TREE_LIST);
 	if(list_totalTree!=null && list_totalTree.size()>0)
 	{
 		for(int i=0; i<list_totalTree.size(); i++)//一级部门循环
@@ -414,6 +478,14 @@ jQuery(function($) {
 function closeDialog()
 {
 	$('#closeDialog').click();
+}
+
+function isObjNull(obj,objName){
+jQuery(function($) {
+	if(obj.checked){
+		$('#'+objName).val('');
+	}
+});
 }
 </script>
 <jsp:include page="common/footer.jsp" />

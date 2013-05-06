@@ -211,7 +211,7 @@ jQuery(function($) {
 	hideObj("fileManagerAddMsg");
 	hideObj("uploadType2");
 	hideObj("uploadType3");
-	uploadTable('<%=uf.getTreeId() %>,<%=uf.getUserId() %>');
+	uploadTable('<%=uf.getTreeId() %>,<%=uf.getUserId() %>,<%=DateUtils.getChar8()%>');
 	loadPage("fileUploadDiv", contextPath()+"/common/fileUpload.jsp?uploadType=server");
 	$("#fileUploadDiv").css("display", "block");
 	static_imgShow = false;
@@ -243,7 +243,7 @@ jQuery(function($) {
 	hideObj("fileManagerAddMsg");
 	hideObj("uploadType1");
 	hideObj("uploadType2");
-	uploadTable2('<%=userTreeId %>,<%=userUserId %>');
+	uploadTable2('<%=userTreeId %>,<%=userUserId %>,<%=DateUtils.getChar8()%>');
 	$("#imgShow").css("display", "none");
 	loadPage("fileUploadDiv", contextPath()+"/common/fileUpload.jsp");
 	$("#fileUploadDiv").css("display", "block");

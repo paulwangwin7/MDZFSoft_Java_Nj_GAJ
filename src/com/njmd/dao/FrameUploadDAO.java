@@ -343,7 +343,8 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			String fileCreateUserId, String fileStats, String fileRemark,
 			String takeTime_begin, String takeTime_end, String policeCode,
 			String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Long policeType, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page,
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -367,16 +368,22 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			} else {
 				queryString.append(" and model.takeTime >='"+takeTime_begin+"' and model.takeTime <='"+takeTime_end+"'");
 			}
-			if(!policeCode.equals("")) {
+			if(!policeCode.equals("") && nullPoliceCode.equals("")) {
 				queryString.append(" and model.policeCode like '%"+policeCode+"%'");
+			}
+			if(!nullPoliceCode.equals("")) {
+				queryString.append(" and model.policeCode is null");
 			}
 			if(policeTime_begin.equals("") || policeTime_end.equals("")) {
 
 			} else {
 				queryString.append(" and model.policeTime >='"+policeTime_begin+"' and model.policeTime <='"+policeTime_end+"'");
 			}
-			if(!policeDesc.equals("")) {
+			if(!policeDesc.equals("") && nullPoliceDesc.equals("")) {
 				queryString.append(" and model.policeDesc like '%"+policeDesc+"%'");
+			}
+			if(!nullPoliceDesc.equals("")) {
+				queryString.append(" and model.policeDesc is null");
 			}
 			if(beginTime.equals("") || endTime.equals("")) {
 
@@ -392,11 +399,17 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!fileStats.equals("")) {
 				queryString.append(" and model.fileStats = ?");
 			}
-			if(!fileRemark.equals("")) {
+			if(!fileRemark.equals("") && nullRemark.equals("")) {
 				queryString.append(" and model.fileRemark like ?");
+			}
+			if(!nullRemark.equals("")) {
+				queryString.append(" and model.fileRemark is null");
 			}
 			if(!uploadName.equals("")) {
 				queryString.append(" and model.uploadName like ?");
+			}
+			if(!showTree.equals("")) {
+				queryString.append(" and model.tree2Id = "+showTree);
 			}
 			queryString.append(" and (model.fileState!='F' or model.fileState!='U')");
 			queryString.append(" order by model.uploadId desc");
@@ -418,7 +431,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!fileStats.equals("")) {
 				queryObject.setParameter(parameterIndex++, fileStats);
 			}
-			if(!fileRemark.equals("")) {
+			if(!fileRemark.equals("") && nullRemark.equals("")) {
 				queryObject.setParameter(parameterIndex++, "%"+fileRemark+"%");
 			}
 			if(!uploadName.equals("")) {
@@ -451,7 +464,8 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			String fileCreateUserId, String fileStats, String fileRemark,
 			String takeTime_begin, String takeTime_end, String policeCode,
 			String policeTime_begin, String policeTime_end, String policeDesc,
-			String useTime_begin, String useTime_end, Long policeType, Page page) {
+			String useTime_begin, String useTime_end, Long policeType, Page page,
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -475,16 +489,22 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			} else {
 				queryString.append(" and model.takeTime >='"+takeTime_begin+"' and model.takeTime <='"+takeTime_end+"'");
 			}
-			if(!policeCode.equals("")) {
+			if(!policeCode.equals("") && nullPoliceCode.equals("")) {
 				queryString.append(" and model.policeCode like '%"+policeCode+"%'");
+			}
+			if(!nullPoliceCode.equals("")) {
+				queryString.append(" and model.policeCode is null");
 			}
 			if(policeTime_begin.equals("") || policeTime_end.equals("")) {
 
 			} else {
 				queryString.append(" and model.policeTime >='"+policeTime_begin+"' and model.policeTime <='"+policeTime_end+"'");
 			}
-			if(!policeDesc.equals("")) {
+			if(!policeDesc.equals("") && nullPoliceDesc.equals("")) {
 				queryString.append(" and model.policeDesc like '%"+policeDesc+"%'");
+			}
+			if(!nullPoliceDesc.equals("")) {
+				queryString.append(" and model.policeDesc is null");
 			}
 			if(!uploadUserId.equals("")) {
 				queryString.append(" and model.userId = ?");
@@ -495,11 +515,17 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!fileStats.equals("")) {
 				queryString.append(" and model.fileStats = ?");
 			}
-			if(!fileRemark.equals("")) {
+			if(!fileRemark.equals("") && nullRemark.equals("")) {
 				queryString.append(" and model.fileRemark like ?");
+			}
+			if(!nullRemark.equals("")) {
+				queryString.append(" and model.fileRemark is null");
 			}
 			if(!uploadName.equals("")) {
 				queryString.append(" and model.uploadName like ?");
+			}
+			if(!showTree.equals("")) {
+				queryString.append(" and model.tree2Id = "+showTree);
 			}
 			queryString.append(" and (model.fileState!='F' or model.fileState!='U')");
 			queryString.append(" order by model.uploadId desc");
@@ -597,8 +623,9 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	}
 
 	@SuppressWarnings({ "finally", "unchecked" })
-	public Page mineUploadList(String treeId, String parentTreeId,
-			String uploadUserId, Page page) {
+	public Page mineUploadList(String beginTime,String endTime,String fileRemark,String policeCode,
+			String policeDesc,String nullRemark,String nullPoliceCode,String nullPoliceDesc,
+			String treeId, String parentTreeId, String uploadUserId, Page page) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -612,6 +639,29 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if (!uploadUserId.equals("")) {
 				queryString.append(" and (model.userId = ? or model.editId = ?)");
 			}
+			if(beginTime.equals("") || endTime.equals("")) {
+
+			} else {
+				queryString.append(" and model.uploadTime >=? and model.uploadTime <=?");
+			}
+			if(!fileRemark.equals("") && nullRemark.equals("")) {
+				queryString.append(" and model.fileRemark like '%"+fileRemark+"%'");
+			}
+			if(!nullRemark.equals("")) {
+				queryString.append(" and model.fileRemark is null");
+			}
+			if(!policeCode.equals("") && nullPoliceCode.equals("")) {
+				queryString.append(" and model.policeCode like '%"+policeCode+"%'");
+			}
+			if(!nullPoliceCode.equals("")) {
+				queryString.append(" and model.policeCode is null");
+			}
+			if(!policeDesc.equals("") && nullPoliceDesc.equals("")) {
+				queryString.append(" and model.policeDesc like '%"+policeDesc+"%'");
+			}
+			if(!nullPoliceDesc.equals("")) {
+				queryString.append(" and model.policeDesc is null");
+			}
 			queryString.append(" and (model.fileState!='F' or model.fileState!='U')");
 			queryString.append(" order by model.uploadId desc");
 			Query queryObject = session.createQuery(queryString.toString());
@@ -620,6 +670,12 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if (!uploadUserId.equals("")) {
 				queryObject.setParameter(parameterIndex++, new Long(uploadUserId));
 				queryObject.setParameter(parameterIndex++, new Long(uploadUserId));
+			}
+			if(beginTime.equals("") || endTime.equals("")) {
+
+			} else {
+				queryObject.setParameter(parameterIndex++, beginTime);
+				queryObject.setParameter(parameterIndex++, endTime);
 			}
 			page.setTotal(queryObject.list().size());
 			queryObject.setFirstResult((page.getPageCute()-1)*page.getDbLine());
@@ -805,6 +861,147 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		} catch (RuntimeException re) {
 			log.error("find all failed", re);
 			throw re;
+		} finally {
+			session.close();
+			return results;
+		}
+	}
+
+	@SuppressWarnings("finally")
+	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd) {
+		List<UploadForm> results = null;
+		Session session = getSession();
+		try {
+			session.clear();
+			String queryString = "from FrameUpload as model";
+			String whereOrAnd = " where";
+			if(treeId!=null && treeId>0) {
+				queryString += " where (model.tree2Id = "+treeId+" or model.tree1Id = "+treeId+")";
+				whereOrAnd = " and";
+			}
+			if(!beginTime.equals("") && !endTime.equals("")) {
+				queryString += whereOrAnd+" model.uploadTime >= ? and model.uploadTime <= ?";
+				whereOrAnd = " and";
+			}
+			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
+				queryString += whereOrAnd+" model.useTime >= ? and model.useTime <= ?";
+			}
+			Query queryObject = session.createQuery(queryString);
+			int paramIndex = 0;
+			if(!beginTime.equals("") && !endTime.equals("")) {
+				queryObject.setParameter(paramIndex, beginTime);paramIndex++;
+				queryObject.setParameter(paramIndex, endTime);paramIndex++;
+			}
+			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
+				queryObject.setParameter(paramIndex, new Long(useTimeBegin));paramIndex++;
+				queryObject.setParameter(paramIndex, new Long(useTimeEnd));
+			}
+			List querylist = queryObject.list();
+			if(querylist!=null && querylist.size()>0) {
+				results = new ArrayList<UploadForm>();
+				for(Object obj: querylist) {
+					UploadForm uploadForm = new UploadForm();
+					FrameUpload frameUpload = (FrameUpload)obj;
+					uploadForm.setTree2Id(frameUpload.getTree2Id());//部门id
+					uploadForm.setPoliceType(frameUpload.getPoliceType());//接警类型
+					uploadForm.setPoliceCode(frameUpload.getPoliceCode());//接警编号
+					results.add(uploadForm);
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			session.close();
+			return results;
+		}
+	}
+
+	@SuppressWarnings("finally")
+	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, Page page) {
+		List<UploadForm> results = null;
+		Session session = getSession();
+		try {
+			session.clear();
+			String queryString = "from FrameUpload as model";
+			String whereOrAnd = " where";
+			if(treeId!=null && treeId>0) {
+				queryString += " where model.tree2Id = "+treeId;
+				whereOrAnd = " and";
+			}
+			if(typeId==0 || typeId.equals("0")) {
+				queryString += whereOrAnd+" model.policeType is null";
+				whereOrAnd = " and";
+			}
+			if(typeId!=null && typeId>0) {
+				queryString += whereOrAnd+" model.policeType = ?";
+				whereOrAnd = " and";
+			}
+			if(!beginTime.equals("") && !endTime.equals("")) {
+				queryString += whereOrAnd+" model.uploadTime >= ? and model.uploadTime <= ?";
+				whereOrAnd = " and";
+			}
+			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
+				queryString += whereOrAnd+" model.useTime >= ? and model.useTime <= ?";
+			}
+			Query queryObject = session.createQuery(queryString);
+			int paramIndex = 0;
+			if(typeId!=null && typeId>0) {
+				queryObject.setParameter(paramIndex, typeId);paramIndex++;
+			}
+			if(!beginTime.equals("") && !endTime.equals("")) {
+				queryObject.setParameter(paramIndex, beginTime);paramIndex++;
+				queryObject.setParameter(paramIndex, endTime);paramIndex++;
+			}
+			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
+				queryObject.setParameter(paramIndex, new Long(useTimeBegin));paramIndex++;
+				queryObject.setParameter(paramIndex, new Long(useTimeEnd));
+			}
+			page.setTotal(queryObject.list().size());
+			queryObject.setFirstResult((page.getPageCute()-1)*page.getDbLine());
+			queryObject.setMaxResults(page.getDbLine());
+			List querylist = queryObject.list();
+			if(querylist!=null && querylist.size()>0) {
+				results = new ArrayList<UploadForm>();
+				for(Object obj: querylist) {
+					results.add(setUploadFormByFrameUpload(new UploadForm(), (FrameUpload)obj));
+				}
+			}
+			page.setListObject(results);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			session.close();
+			return page;
+		}
+	}
+
+	@SuppressWarnings("finally")
+	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, Long treeId, Long policeType) {
+		List<UploadForm> results = null;
+		Session session = getSession();
+		try {
+			session.clear();
+			String queryString = "from FrameUpload as model where (model.tree2Id = "+treeId+" or model.tree1Id = "+treeId+") and substr(model.uploadTime,0,8) >= ? and substr(model.uploadTime,0,8) <= ? and model.policeType = ?";
+			Query queryObject = session.createQuery(queryString);
+			queryObject.setParameter(0, uploadTimeBegin);
+			queryObject.setParameter(1, uploadTimeEnd);
+			queryObject.setParameter(2, policeType);
+			List querylist = queryObject.list();
+			if(querylist!=null && querylist.size()>0) {
+				results = new ArrayList<UploadForm>();
+				for(Object obj: querylist) {
+					UploadForm uploadForm = new UploadForm();
+					FrameUpload frameUpload = (FrameUpload)obj;
+					uploadForm.setTree2Id(frameUpload.getTree2Id());//部门id
+					uploadForm.setPoliceType(frameUpload.getPoliceType());//接警类型
+					uploadForm.setPoliceCode(frameUpload.getPoliceCode());//接警编号
+					uploadForm.setUploadTime(frameUpload.getUploadTime());//文件上传时间
+					uploadForm.setTakeTime(frameUpload.getTakeTime());//录制时间
+					results.add(uploadForm);
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		} finally {
 			session.close();
 			return results;

@@ -26,9 +26,9 @@ public class UploadForm {
 	@Expose
 	private String fileState;//上传文件状态 A-有效；U-无效；F-过期
 	@Expose
-	private long tree1Id;//上传人部门id
+	private long tree1Id;//上传人上级部门id
 	@Expose
-	private long tree2Id;//上传人上级部门id
+	private long tree2Id;//上传人部门id
 	@Expose
 	private String treeName;//上传人部门名
 	@Expose

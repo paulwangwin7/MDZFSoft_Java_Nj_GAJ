@@ -6,6 +6,10 @@
 	<form-beans></form-beans>
 	<global-exceptions />
 	<global-forwards>
+		<forward name="statistic" path="/statistic.jsp" /><!-- 20130417需求1.3 -->
+		<forward name="statisticDetail" path="/statisticDetail.jsp" /><!-- 20130417需求1.3 -->
+		<forward name="statisticCheck" path="/statisticCheck.jsp" /><!-- 20130417需求1.4 -->
+		
 		<!-- sys forwards -->
 		<forward name="result" path="/result.jsp" /><!-- GSON返回报文页面 -->
 		<forward name="user_noticeDetail" path="/noticeDetail.jsp"></forward>
