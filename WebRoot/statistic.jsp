@@ -6,15 +6,17 @@ String beginTime = "";
 if(request.getParameter("beginTime")!=null) {
 	beginTime = request.getParameter("beginTime");
 }
-if(request.getParameter("beginTime_")!=null) {
-	beginTime = request.getParameter("beginTime_");
-}
 String endTime = "";
 if(request.getParameter("endTime")!=null) {
 	endTime = request.getParameter("endTime");
 }
-if(request.getParameter("endTime_")!=null) {
-	endTime = request.getParameter("endTime_");
+String policeTimeBegin = "";
+if(request.getParameter("policeTimeBegin")!=null) {
+	policeTimeBegin = request.getParameter("policeTimeBegin");
+}
+String policeTimeEnd = "";
+if(request.getParameter("policeTimeEnd")!=null) {
+	policeTimeEnd = request.getParameter("policeTimeEnd");
 }
 String useTimeBegin = request.getParameter("useTimeBegin")==null?"":request.getParameter("useTimeBegin");
 String useTimeEnd = request.getParameter("useTimeEnd")==null?"":request.getParameter("useTimeEnd");
@@ -122,12 +124,14 @@ List<PoliceTypeForm> typeList = (List<PoliceTypeForm>)request.getAttribute("Poli
 %>
 </table>
 <form id="detailForm" action="<%=basePath %>userAction.do?method=statisticDetail" method="post" target="_blank">
-<input type="text" name="beginTime" value="<%=beginTime %>"/>
-<input type="text" name="endTime" value="<%=endTime %>"/>
-<input type="text" name="useTimeBegin" value="<%=useTimeBegin %>"/>
-<input type="text" name="useTimeEnd" value="<%=useTimeEnd %>"/>
-<input type="text" name="treeId" id="treeId" value=""/>
-<input type="text" name="typeId" id="typeId" value=""/>
+<input type="hidden" name="beginTime" value="<%=beginTime %>"/>
+<input type="hidden" name="endTime" value="<%=endTime %>"/>
+<input type="hidden" name="useTimeBegin" value="<%=useTimeBegin %>"/>
+<input type="hidden" name="useTimeEnd" value="<%=useTimeEnd %>"/>
+<input type="hidden" name="treeId" id="treeId" value=""/>
+<input type="hidden" name="typeId" id="typeId" value=""/>
+<input type="hidden" name="policeTimeBegin" value="<%=policeTimeBegin %>"/>
+<input type="hidden" name="policeTimeEnd" value="<%=policeTimeEnd %>"/>
 </form>
 <script>
 function showDetail(treeId, typeId){

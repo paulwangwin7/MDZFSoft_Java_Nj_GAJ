@@ -19,3 +19,4 @@ test.jsp
                                 type="application/x-shockwave-flash" width="800" height="600"> 
                             </embed> 
                         </object> 
+<a href="MyJsp2.jsp">afsdfsds</a>

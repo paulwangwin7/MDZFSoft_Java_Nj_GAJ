@@ -3,6 +3,10 @@
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+UserForm userForm = null;
+if(request.getSession().getAttribute(Constants.SESSION_USER_FORM)!=null) {
+	userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
+}
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -43,9 +47,15 @@ var nowMonth = "<%=DateUtils.getChar8().substring(4,6)%>";
 								派出所统计
 							</li>
 							<li class="tab_item" onclick="showFrame('3')">警员统计</li>
+<%
+	if(userForm!=null && userForm.getUserId() == 0) {
+%>
 							<li class="tab_item" onclick="showFrame('4')">视频分类</li>
 							<li class="tab_item" onclick="showFrame('5')">规范化考评</li>
 							<li class="tab_item" onclick="showFrame('6')">接处警比对</li>
+<%
+	}
+%>
 						</ul>
 						<ul class="tab_conlist">
 							<li class="tab_conitem current">
@@ -171,6 +181,9 @@ jQuery(function($) {
 </div>
 							</div>
 							</li>
+<%
+	if(userForm!=null && userForm.getUserId() == 0) {
+%>
 							<li class="tab_conitem">
 							<div class="gray_bor_bg">
 								<h5 class="gray_blod_word">组合条件搜索</h5>
@@ -178,9 +191,17 @@ jQuery(function($) {
 								<div class="search_form">
 									<div class="mt_10">
 <form id="statisticForm" action="<%=basePath %>userAction.do?method=statistic" method="post" target="statistic">
-上传时间：<input class="input_168x19" id="beginTime" type="text" value="" maxlength=14 name="beginTime" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
+<input type="hidden" name="beginTime" id="statistic_beginTime" />
+<input type="hidden" name="endTime" id="statistic_endTime" />
+<input type="hidden" name="policeTimeBegin" id="statistic_policeTimeBegin" />
+<input type="hidden" name="policeTimeEnd" id="statistic_policeTimeEnd" />
+<select id="statisticTime">
+<option value="1">上传时间</option>
+<option value="2">接警时间</option>
+</select>
+：<input class="input_168x19" id="statisticBeginTime" type="text" value="" maxlength=14 onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
 &nbsp;&nbsp;-&nbsp;&nbsp;
-<input type="text" id="endTime" class="input_168x19" value="" maxlength=14 name="endTime" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
+<input type="text" id="statisticEndTime" class="input_168x19" value="" maxlength=14 onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
 <a id="datetype" href="javascript:void(0)">切换至手写</a>
 									<br/>
 									<input type="button" class="blue_mod_btn" onclick="statistic_()" value="统&nbsp;计" />
@@ -194,20 +215,20 @@ jQuery(function($) {
 	$('#datetype').click(function(){
 		if(shouxie){
 			$(this).html('切换至选择');
-			$('#beginTime').attr('onclick','');
-			$('#endTime').attr('onclick','');
-			$('#beginTime').attr('readonly',false);
-			$('#endTime').attr('readonly',false);
+			$('#statisticBeginTime').attr('onclick','');
+			$('#statisticEndTime').attr('onclick','');
+			$('#statisticBeginTime').attr('readonly',false);
+			$('#statisticEndTime').attr('readonly',false);
 		} else {
 			$(this).html('切换至手写');
-			document.getElementById('beginTime').onclick = function(){
-				SelectDate(document.getElementById('beginTime'),'yyyyMMddhhmmss');
+			document.getElementById('statisticBeginTime').onclick = function(){
+				SelectDate(document.getElementById('statisticBeginTime'),'yyyyMMddhhmmss');
 			};
-			document.getElementById('endTime').onclick = function(){
-				SelectDate(document.getElementById('endTime'),'yyyyMMddhhmmss');
+			document.getElementById('statisticEndTime').onclick = function(){
+				SelectDate(document.getElementById('statisticEndTime'),'yyyyMMddhhmmss');
 			};
-			$('#beginTime').attr('readonly',true);
-			$('#endTime').attr('readonly',true);
+			$('#statisticBeginTime').attr('readonly',true);
+			$('#statisticEndTime').attr('readonly',true);
 		}
 		shouxie = !shouxie;
 	});
@@ -215,20 +236,31 @@ jQuery(function($) {
 
 function statistic_() {
 jQuery(function($) {
-	var bTime = $('#beginTime').val();
-	var eTime = $('#endTime').val();
+	$('#statistic_beginTime').val('');
+	$('#statistic_endTime').val('');
+	$('#statistic_policeTimeBegin').val('');
+	$('#statistic_policeTimeEnd').val('');
+	var bTime = $('#statisticBeginTime').val();
+	var eTime = $('#statisticEndTime').val();
 	if(bTime.length==eTime.length) {
 		if(bTime.length==0) {
 			$('#statisticForm').submit();
 		} else if(bTime.length==14) {
 			if(isNaN(bTime) || isNaN(eTime)) {
-				alert('请检查上传时间信息是否正确！');
+				alert('请检查时间信息是否正确！');
 			} else {
+				if($('#statisticTime').val()=='1') {
+					$('#statistic_beginTime').val(bTime);
+					$('#statistic_endTime').val(eTime);
+				} else {
+					$('#statistic_policeTimeBegin').val(bTime);
+					$('#statistic_policeTimeEnd').val(eTime);
+				}
 				$('#statisticForm').submit();
 			}
 		}
 	} else {
-		alert('上传时间信息不全！');
+		alert('时间信息不全！');
 	}
 });
 }
@@ -241,9 +273,17 @@ jQuery(function($) {
 								<div class="search_form">
 									<div class="mt_10">
 <form id="statisticCheckForm" action="<%=basePath %>userAction.do?method=statisticCheck" method="post" target="statisticCheck">
-上传时间：<input class="input_168x19" id="beginTime_" type="text" name="beginTime_" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
+<input type="hidden" name="beginTime" id="statisticCheck_beginTime" />
+<input type="hidden" name="endTime" id="statisticCheck_endTime" />
+<input type="hidden" name="policeTimeBegin" id="statisticCheck_policeTimeBegin" />
+<input type="hidden" name="policeTimeEnd" id="statisticCheck_policeTimeEnd" />
+<select id="statisticCheckTime">
+<option value="1">上传时间</option>
+<option value="2">接警时间</option>
+</select>
+：<input class="input_168x19" id="statisticCheckBeginTime" type="text" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
 &nbsp;&nbsp;-&nbsp;&nbsp;
-<input type="text" id="endTime_" class="input_168x19" name="endTime_" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
+<input type="text" id="statisticCheckEndTime" class="input_168x19" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly />
 <a id="datetype_" href="javascript:void(0)">切换至手写</a>
 									<br/>
 到达时间：<input class="input_38x19" id="useTimeBegin" type="text" name="useTimeBegin" />
@@ -261,20 +301,20 @@ jQuery(function($) {
 	$('#datetype_').click(function(){
 		if(shouxie_){
 			$(this).html('切换至选择');
-			$('#beginTime_').attr('onclick','');
-			$('#endTime_').attr('onclick','');
-			$('#beginTime_').attr('readonly',false);
-			$('#endTime_').attr('readonly',false);
+			$('#statisticCheckBeginTime').attr('onclick','');
+			$('#statisticCheckEndTime').attr('onclick','');
+			$('#statisticCheckBeginTime').attr('readonly',false);
+			$('#statisticCheckEndTime').attr('readonly',false);
 		} else {
 			$(this).html('切换至手写');
-			document.getElementById('beginTime_').onclick = function(){
-				SelectDate(document.getElementById('beginTime_'),'yyyyMMddhhmmss');
+			document.getElementById('statisticCheckBeginTime').onclick = function(){
+				SelectDate(document.getElementById('statisticCheckBeginTime'),'yyyyMMddhhmmss');
 			};
-			document.getElementById('endTime_').onclick = function(){
-				SelectDate(document.getElementById('endTime_'),'yyyyMMddhhmmss');
+			document.getElementById('statisticCheckEndTime').onclick = function(){
+				SelectDate(document.getElementById('statisticCheckEndTime'),'yyyyMMddhhmmss');
 			};
-			$('#beginTime_').attr('readonly',true);
-			$('#endTime_').attr('readonly',true);
+			$('#statisticCheckBeginTime').attr('readonly',true);
+			$('#statisticCheckEndTime').attr('readonly',true);
 		}
 		shouxie_ = !shouxie_;
 	});
@@ -282,20 +322,31 @@ jQuery(function($) {
 
 function statisticCheck_() {
 jQuery(function($) {
-	var bTime = $('#beginTime_').val();
-	var eTime = $('#endTime_').val();
+	$('#statisticCheck_beginTime').val('');
+	$('#statisticCheck_endTime').val('');
+	$('#statisticCheck_policeTimeBegin').val('');
+	$('#statisticCheck_policeTimeEnd').val('');
+	var bTime = $('#statisticCheckBeginTime').val();
+	var eTime = $('#statisticCheckEndTime').val();
 	if(bTime.length==eTime.length) {
 		if(bTime.length==0) {
 			$('#statisticCheckForm').submit();
 		} else if(bTime.length==14) {
 			if(isNaN(bTime) || isNaN(eTime)) {
-				alert('请检查上传时间信息是否正确！');
+				alert('请检查时间信息是否正确！');
 			} else {
+				if($('#statisticCheckTime').val()=='1') {
+					$('#statisticCheck_beginTime').val(bTime);
+					$('#statisticCheck_endTime').val(eTime);
+				} else {
+					$('#statisticCheck_policeTimeBegin').val(bTime);
+					$('#statisticCheck_policeTimeEnd').val(eTime);
+				}
 				$('#statisticCheckForm').submit();
 			}
 		}
 	} else {
-		alert('上传时间信息不全！');
+		alert('时间信息不全！');
 	}
 });
 }
@@ -308,7 +359,11 @@ jQuery(function($) {
 								<div class="search_form">
 									<div class="mt_10">
 <form id="contrastForm" action="<%=basePath %>jspUpload.jsp" enctype="multipart/form-data" method="post" target="contrast">
-<p>选择部门：<select name="contrastTree" id="contrastTree" class="input_130x20">
+<input type="hidden" id="contrast_uploadTimeBegin" name="uploadTimeBegin"/>
+<input type="hidden" id="contrast_uploadTimeEnd" name="uploadTimeEnd"/>
+<input type="hidden" id="contrast_policeTimeBegin" name="policeTimeBegin"/>
+<input type="hidden" id="contrast_policeTimeEnd" name="policeTimeEnd"/>
+<p>选择部门&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;：<select name="contrastTree" id="contrastTree" class="input_130x20">
 										<option value=""> -- </option>
 <%
 	if(list_totalTree!=null && list_totalTree.size()>0)
@@ -331,10 +386,15 @@ jQuery(function($) {
 %>
 									</select>
 </p>
-<p>上传时间：<input class="input_168x19" id="contrastTimeBegin" type="text" name="contrastTimeBegin" onclick="SelectDate(this,'yyyyMMdd')" readonly />
+<p>
+<select id="contrastTime">
+<option value="1">上传时间</option>
+<option value="2">接警时间</option>
+</select>
+：<input class="input_168x19" id="contrastTimeBegin" type="text" name="contrastTimeBegin" onclick="SelectDate(this,'yyyyMMdd')" readonly />
 &nbsp;-&nbsp;<input class="input_168x19" id="contrastTimeEnd" type="text" name="contrastTimeEnd" onclick="SelectDate(this,'yyyyMMdd')" readonly />
 </p>
-<p>上传文件： <input class="input_168x19" type="file" id="File1" name="File1" size="20" maxlength="20"></p>
+<p>上传文件&nbsp;&nbsp;&nbsp;&nbsp;： <input class="input_168x19" type="file" id="File1" name="File1" size="20" maxlength="20"></p>
 <input type="button" class="blue_mod_btn" onclick="contrast_()" value="比&nbsp;对" />
 </form>
 									</div>
@@ -343,6 +403,10 @@ jQuery(function($) {
 <script>
 function contrast_() {
 jQuery(function($) {
+	$('#contrast_uploadTimeBegin').val('');
+	$('#contrast_uploadTimeEnd').val('');
+	$('#contrast_policeTimeBegin').val('');
+	$('#contrast_policeTimeBegin').val('');
 	var contrastTree = $('#contrastTree').val();
 	var contrastTimeBegin = $('#contrastTimeBegin').val();
 	var contrastTimeEnd = $('#contrastTimeEnd').val();
@@ -350,18 +414,28 @@ jQuery(function($) {
 	if(contrastTree=='') {
 		alert('请选择部门');
 	} else if(contrastTimeBegin=='' || contrastTimeEnd=='') {
-		alert('请选择上传时间');
-	} else if() {
-		alert('起始时间不得小于结束时间');
+		alert('请选择上传/接警时间');
+	} else if(contrastTimeBegin>contrastTimeEnd) {
+		alert('起始时间不能大于结束时间');
 	}else if(File1=='') {
 		alert('请选择上传文件');
 	} else {
+		if($('#contrastTime').val()=='1') {
+			$('#contrast_uploadTimeBegin').val(contrastTimeBegin);
+			$('#contrast_uploadTimeEnd').val(contrastTimeEnd);
+		} else {
+			$('#contrast_policeTimeBegin').val(contrastTimeBegin);
+			$('#contrast_policeTimeEnd').val(contrastTimeEnd);
+		}
 		$('#contrastForm').submit();
 	}
 });
 }
 </script>
 							</li>
+<%
+	}
+%>
 						</ul>
 <script>
 //数据初始化

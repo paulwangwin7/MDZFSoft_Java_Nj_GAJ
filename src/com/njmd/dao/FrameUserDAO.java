@@ -46,6 +46,18 @@ public class FrameUserDAO extends BaseHibernateDAO {
 	public static final String USER_STATE = "userState";
 
 	@SuppressWarnings("finally")
+	public List<UserForm> getUserListByIdCard(String idCard) {
+		List<UserForm> results = null;
+		try {
+			List list = findByUserIdcard(idCard);
+		} catch(Exception ex) {
+			results = null;
+		} finally {
+			return results;
+		}
+	}
+
+	@SuppressWarnings("finally")
 	public int save(FrameUser transientInstance) {
 		int saveResult = Constants.ACTION_FAILED;
 		log.debug("saving FrameUser instance");
@@ -415,6 +427,80 @@ public class FrameUserDAO extends BaseHibernateDAO {
 				} else {
 					queryObject.setParameter(paramIndex++, instance.getTreeId());
 				}
+			}
+			if(!queryTreeId.equals(""))
+			{
+				queryObject.setParameter(paramIndex++, new Long(queryTreeId));
+			}
+			page.setTotal(queryObject.list().size());
+			queryObject.setFirstResult((page.getPageCute()-1)*page.getDbLine());
+			queryObject.setMaxResults(page.getDbLine());
+			List<UserForm> userList = new ArrayList<UserForm>();
+			List querylist = queryObject.list();
+			if(querylist!=null && querylist.size()>0) {
+				for(int i=0; i<querylist.size(); i++) {
+					Object[] obj = (Object[]) querylist.get(i);
+					FrameUser frameUser = (FrameUser)(obj[0]);
+					FrameTree frameTree = (FrameTree)(obj[1]);
+					FrameRole frameRole = (FrameRole)(obj[2]);
+	//				UserForm userForm = new UserForm();
+	//				userForm.setUserId(frameUser.getUserId());
+	//				userForm.setLoginName(frameUser.getLoginName());
+	//				userForm.setLoginPswd(frameUser.getLoginPswd());
+	//				userForm.setUserName(frameUser.getUserName());
+	//				userForm.setUserCode(frameUser.getUserCode());
+	//				userForm.setSex(frameUser.getSex());
+	//				userForm.setUserIdCard(frameUser.getUserIdcard());
+	//				userForm.setCard_typeId(frameUser.getCardTypeid());
+	//				userForm.setCardCode(frameUser.getCardCode());
+	//				userForm.setTreeId(frameUser.getTreeId());
+	//				userForm.setRoleId(frameUser.getRoleId());
+	//				userForm.setCreateTime(frameUser.getCreateTime());
+	//				userForm.setUserState(frameUser.getUserState());
+	//				userForm.setTreeNameStr(frameTree.getTreeName());
+	//				userForm.setRoleNameStr(frameRole.getId().getRoleName());
+					userList.add(setUserForm(frameUser, frameTree, frameRole));
+				}
+			}
+			page.setListObject(userList);
+		} catch (RuntimeException re) {
+			log.error("find by property name failed", re);
+//			throw re;
+		} finally {
+			session.close();
+			return page;
+		}
+	}
+	@SuppressWarnings({ "finally", "unchecked" })
+	public Page getUserListByAdmin(FrameUser instance, String queryTreeId, Page page) {
+		Session session = getSession();
+		try {
+			session.clear();
+			StringBuffer queryString = new StringBuffer("select model,model2,model3 from FrameUser as model,FrameTree as model2,FrameRole as model3 where model.treeId=model2.treeId and model.roleId=model3.roleId");
+			if (instance.getUserName() != null && !instance.getUserName().equals("")) {
+				queryString.append(" and model.userName like ?");
+			}
+			if (instance.getUserCode() != null && !instance.getUserCode().equals("")) {
+				queryString.append(" and model.userCode = ?");
+			}
+			if (instance.getSex() != null && !instance.getSex().equals("")) {
+				queryString.append(" and model.sex = ?");
+			}
+			if(!queryTreeId.equals(""))
+			{
+				queryString.append(" and model.treeId = ?");
+			}
+			queryString.append(" order by model.createTime desc");
+			Query queryObject = session.createQuery(queryString.toString());
+			int paramIndex = 0;
+			if (instance.getUserName() != null && !instance.getUserName().equals("")) {
+				queryObject.setParameter(paramIndex++, "%"+instance.getUserName()+"%");
+			}
+			if (instance.getUserCode() != null && !instance.getUserCode().equals("")) {
+				queryObject.setParameter(paramIndex++, instance.getUserCode());
+			}
+			if (instance.getSex() != null && !instance.getSex().equals("")) {
+				queryObject.setParameter(paramIndex++, instance.getSex());
 			}
 			if(!queryTreeId.equals(""))
 			{

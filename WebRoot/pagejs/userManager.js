@@ -15,6 +15,10 @@ jQuery(function($) {
 	{
 		showMsgObj('userAddMsg', '登录帐号长度不符，请控制在【4,20】个字节。', 2, 'req_loginName');
 	}
+	else if(getLenB($("#req_userIdCard").val())<15 || getLenB($("#req_userIdCard").val())>18)
+	{
+		showMsgObj('userAddMsg', '请检查身份证号信息是否正确。', 2, 'req_userIdCard');
+	}
 	else if(getLenB($("#req_userName").val())<4 || getLenB($("#req_userName").val())>20)
 	{
 		showMsgObj('userAddMsg', '姓名长度不符，请控制在【4,20】个字节。', 2, 'req_userName');
@@ -47,7 +51,7 @@ jQuery(function($) {
 			dataType: 'json',
 			cache: false,
 			async: false,
-			data: {"userId":$("#req_userId").val(),"loginName":$("#req_loginName").val(),"loginPswd":$("#req_loginPswd").val(),"userName":$("#req_userName").val(),"userCode":$("#req_userCode").val(),"sex":getJqueryArrayStr("req_sex"),"userIdCard":"","treeId":$("#req_treeName").val(),"roleId":$("#req_roleName").val(),"userState":getJqueryArrayStr("req_userState")},
+			data: {"userId":$("#req_userId").val(),"loginName":$("#req_loginName").val(),"loginPswd":$("#req_loginPswd").val(),"userName":$("#req_userName").val(),"userCode":$("#req_userCode").val(),"sex":getJqueryArrayStr("req_sex"),"treeId":$("#req_treeName").val(),"roleId":$("#req_roleName").val(),"userState":getJqueryArrayStr("req_userState"),"userIdCard":$("#req_userIdCard").val()},
 			success:function(res){
 				if(res != null)
 				{
@@ -150,6 +154,11 @@ jQuery(function($) {
 				else
 				{
 					$('#req_userId').val(res.retObj.userId);
+					if(res.retObj.userIdCard==null) {
+						$('#req_userIdCard').val('');
+					} else {
+						$('#req_userIdCard').val(res.retObj.userIdCard);
+					}
 					$('#req_loginName').val(res.retObj.loginName);
 					$('#req_userName').val(res.retObj.userName);
 					$('#req_userCode').val(res.retObj.userCode);

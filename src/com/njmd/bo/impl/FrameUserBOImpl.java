@@ -12,6 +12,10 @@ import com.njmd.pojo.FrameUser;
 public class FrameUserBOImpl implements FrameUserBO {
 	private FrameUserDAO frameUserDAO;
 
+	public List<FrameUser> getUserListByIdCard(String idCard) {
+		return frameUserDAO.findByUserIdcard(idCard);
+	}
+
 	public Page getUserList(UserForm user, String queryTreeId, Page page) {
 		// TODO Auto-generated method stub
 		FrameUser instance = new FrameUser();
@@ -28,6 +32,24 @@ public class FrameUserBOImpl implements FrameUserBO {
 			instance.setTreeId(user.getTreeId());
 		}
 		return frameUserDAO.getUserList(instance, queryTreeId, page);
+	}
+
+	public Page getUserListByAdmin(UserForm user, String queryTreeId, Page page) {
+		// TODO Auto-generated method stub
+		FrameUser instance = new FrameUser();
+		if(user.getUserName()!=null) {
+			instance.setUserName(user.getUserName());
+		}
+		if(user.getUserCode()!=null) {
+			instance.setUserCode(user.getUserCode());
+		}
+		if(user.getSex()!=null) {
+			instance.setSex(user.getSex());
+		}
+		if(user.getTreeId()>0) {
+			instance.setTreeId(user.getTreeId());
+		}
+		return frameUserDAO.getUserListByAdmin(instance, queryTreeId, page);
 	}
 
 	public Page getUserList(Page page) {

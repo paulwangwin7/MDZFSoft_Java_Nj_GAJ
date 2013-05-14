@@ -38,6 +38,7 @@ import com.njmd.bo.FrameServerInfoBO;
 import com.njmd.bo.FrameTreeBO;
 import com.njmd.bo.FrameUploadBO;
 import com.njmd.bo.FrameUserBO;
+import com.njmd.pojo.FrameUser;
 
 public class ServletAction extends DispatchAction{
 	private SysDAO sysDAO;
@@ -50,6 +51,66 @@ public class ServletAction extends DispatchAction{
 	private FrameServerInfoBO frameServerInfoBO;
 	private FrameUploadBO frameUploadBO;
 	private FrameMenuBO frameMenuBO;
+
+
+
+	/**
+	 * 用户登录 ukey
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ActionForward ukeyLogin(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
+		Result result = new Result();//返回结果
+
+		String idCard = request.getParameter("idCard")==null?"":request.getParameter("idCard");//ukey返回的身份证号
+		UserForm userForm = null;
+		List<FrameUser> frameUserList = frameUserBO.getUserListByIdCard(idCard);
+		if(frameUserList==null || frameUserList.size()==0) {
+			result.setRetCode(Constants.ACTION_FAILED);
+			result.setMsg("请与管理员联系，您的身份证信息尚未录入系统，请输入帐号密码进行登录~");
+		}
+		else {
+			userForm = new UserForm();
+			userForm.setLoginName(frameUserList.get(0).getLoginName());
+			userForm.setLoginPswd(frameUserList.get(0).getLoginPswd());
+			userForm = frameUserBO.userLogin(userForm);
+			if(userForm!=null)//用户账号密码正确
+			{
+				//--step3 判断用户状态是否正常
+				if(userForm.getUserState().equals("A"))//用户状态正常
+				{
+					RoleForm role = new RoleForm();
+					role.setRoleId(userForm.getRoleId());
+					RoleForm roleForm = frameRoleBO.roleDetail(role);
+					// 333
+//					List list_urlForm = userDAO.queryMenuAndUrlByRoleId(roleForm.getUrlIdList().split(","));
+					
+					request.getSession().setAttribute(Constants.SESSION_USER_FORM, userForm);//将该用户的userForm信息保存在session中
+					request.getSession().setAttribute(Constants.SESSION_ROLE_FORM, roleForm);//将该用户的roleForm信息保存在session中
+					request.getSession().setAttribute(Constants.SESSION_URL_LIST, frameMenuBO.queryMenuAndUrlByUrlIds(roleForm.getUrlIdList().split(",")));//将该用户的urlList信息保存在session中
+					result.setMsg("登录成功~");
+					userLog(request, "用户登录");
+				}
+				else//用户状态不正常 未激活或已被锁定
+				{
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户状态不正常，未激活或已被锁定~");
+				}
+			}
+			else//用户账号或密码不正确
+			{
+				result.setRetCode(Constants.ACTION_FAILED);
+				result.setMsg("您输入的用户名或密码错误~");
+			}
+		}
+
+		request.setAttribute("jsonViewStr", getJsonView(result));
+		return mapping.findForward("servletResult");
+	}
 
 	/**
 	 * 用户登录
@@ -715,32 +776,42 @@ public class ServletAction extends DispatchAction{
 		userForm.setRoleId(Long.parseLong(request.getParameter("roleId")));//所属角色id
 		userForm.setCreateTime(DateUtils.getChar14());//创建时间
 		userForm.setUserState(request.getParameter("userState"));//用户状态
-		switch(frameUserBO.userRegister(userForm))//0-注册成功；1-注册失败 系统超时~；2-注册失败 登录名称重复
-		{
-			case 0 : {
-				result.setMsg("用户管理-注册成功~");
-				userLog(request, "用户管理-注册成功~");
-				break;
-			}
-			case 1 : {
-				result.setRetCode(Constants.ACTION_FAILED);
-				result.setMsg("用户管理-注册失败 系统超时~");
-				userLog(request, "用户管理-注册失败 系统超时~");
-				break;
-			}
-			case 2 : {
-				result.setRetCode(Constants.ACTION_FAILED);
-				result.setMsg("用户管理-注册失败 登录帐号重复~");
-				userLog(request, "用户管理-注册失败 登录帐号重复~");
-				break;
-			}
-			default : {
-				result.setRetCode(Constants.ACTION_FAILED);
-				result.setMsg("用户管理-注册失败 系统超时~");
-				userLog(request, "用户管理-注册失败 系统超时~");
-			}
+		boolean idCardVali = true;
+		List<FrameUser> frameUserList = frameUserBO.getUserListByIdCard(request.getParameter("userIdCard"));
+		if(frameUserList!=null && frameUserList.size()>0) {
+			idCardVali = false;
 		}
-
+		if(idCardVali) {
+			switch(frameUserBO.userRegister(userForm))//0-注册成功；1-注册失败 系统超时~；2-注册失败 登录名称重复
+			{
+				case 0 : {
+					result.setMsg("用户管理-注册成功~");
+					userLog(request, "用户管理-注册成功~");
+					break;
+				}
+				case 1 : {
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户管理-注册失败 系统超时~");
+					userLog(request, "用户管理-注册失败 系统超时~");
+					break;
+				}
+				case 2 : {
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户管理-注册失败 登录帐号重复~");
+					userLog(request, "用户管理-注册失败 登录帐号重复~");
+					break;
+				}
+				default : {
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户管理-注册失败 系统超时~");
+					userLog(request, "用户管理-注册失败 系统超时~");
+				}
+			}
+		} else {
+			result.setRetCode(Constants.ACTION_FAILED);
+			result.setMsg("用户管理-注册失败 身份证号重复~");
+			userLog(request, "用户管理-注册失败 身份证号重复~");
+		}
 		request.setAttribute("jsonViewStr", getJsonView(result));
 		return mapping.findForward("servletResult");
 	}
@@ -771,27 +842,44 @@ public class ServletAction extends DispatchAction{
 		userForm.setRoleId(Long.parseLong(request.getParameter("roleId")));
 		userForm.setCreateTime(request.getParameter("createTime"));
 		userForm.setUserState(request.getParameter("userState"));
-		switch(frameUserBO.userModify(userForm))//0-修改成功；1-修改失败 系统超时~；2-修改失败 登录名称重复
-		{
-			case 0 : {
-				userLog(request, "用户信息修改");
-				result.setMsg("用户管理-用户信息修改成功~");
-				break;
+		boolean idCardVali = true;
+		List<FrameUser> frameUserList = frameUserBO.getUserListByIdCard(request.getParameter("userIdCard"));
+		if(frameUserList!=null && frameUserList.size()>0) {
+			if(frameUserList.size()>1) {
+				idCardVali = false;
+			} else {
+				if(!frameUserList.get(0).getUserId().equals(userForm.getUserId())) {
+					idCardVali = false;
+				}
 			}
-			case 1 : {
-				result.setRetCode(Constants.ACTION_FAILED);
-				result.setMsg("用户管理-用户信息修改失败 系统超时~");
-				break;
+		}
+		if(idCardVali) {
+			switch(frameUserBO.userModify(userForm))//0-修改成功；1-修改失败 系统超时~；2-修改失败 登录名称重复
+			{
+				case 0 : {
+					userLog(request, "用户信息修改");
+					result.setMsg("用户管理-用户信息修改成功~");
+					break;
+				}
+				case 1 : {
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户管理-用户信息修改失败 系统超时~");
+					break;
+				}
+				case 2 : {
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户管理-用户信息修改失败 账号名称重复~");
+					break;
+				}
+				default : {
+					result.setRetCode(Constants.ACTION_FAILED);
+					result.setMsg("用户管理-用户信息修改失败 系统超时~");
+				}
 			}
-			case 2 : {
-				result.setRetCode(Constants.ACTION_FAILED);
-				result.setMsg("用户管理-用户信息修改失败 账号名称重复~");
-				break;
-			}
-			default : {
-				result.setRetCode(Constants.ACTION_FAILED);
-				result.setMsg("用户管理-用户信息修改失败 系统超时~");
-			}
+		} else {
+			result.setRetCode(Constants.ACTION_FAILED);
+			result.setMsg("用户管理-用户信息修改失败 身份证号重复~");
+			userLog(request, "用户管理-用户信息修改失败 身份证号重复~");
 		}
 
 		request.setAttribute("jsonViewStr", getJsonView(result));
@@ -1249,40 +1337,44 @@ public class ServletAction extends DispatchAction{
      */
     public ActionForward popNoticeTitle(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) {
     	Result result = new Result();//返回结果
-    	if(request.getSession().getAttribute(Constants.SESSION_USER_FORM)==null) {//用户session为空 登录已超时
-    		result.setRetCode(Constants.ACTION_FAILED);
-    		result.setMsg("用户session为空 登录已超时，无需弹出提示框");
-    		System.out.println("=======用户session为空 登录已超时，无需弹出提示框");
-    	} else {
-    		UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
-    		// 333s
-    		List<NoticeForm> noticeFormList =  sysDAO.noticeManager(userForm);
-    		if(noticeFormList!=null && noticeFormList.size()>0) {
-    			NoticeForm noticeForm = noticeFormList.get(0);//最新的一条公共
-    			//判断最新一条公共是否超出当前时间后5分钟
-    			if(DateUtils.timeXJ(noticeForm.getCreateTime().substring(0,12))>=3) {//超过3分钟
-    				result.setRetCode(Constants.ACTION_FAILED);
-            		result.setMsg("该公告已经超过3分钟，无需弹出提示框");
-            		System.out.println("=======该公告已经超过3分钟，无需弹出提示框");
-    			} else {
-    			//判断是否看过
-	    			if(noLooked(noticeForm, request)) {
-	    				result.setRetCode(Constants.ACTION_SUCCESS);//该公告未看过，需弹出提示框
-	            		result.setMsg("该公告未看过，需弹出提示框");
-	            		result.setRetObj(noticeForm);
-	            		System.out.println("=======该公告未看过，需弹出提示框");
-	    			} else {//已看过
-	    				result.setRetCode(Constants.ACTION_FAILED);
-	            		result.setMsg("该公告已经看过，无需弹出提示框");
-	            		System.out.println("=======该公告已经看过，无需弹出提示框");
-	    			}
-    			}
-    		} else {
-    			result.setRetCode(Constants.ACTION_FAILED);
-        		result.setMsg("暂无公告，无需弹出提示框");
-        		System.out.println("=======暂无公告，无需弹出提示框");
-    		}
-    	}
+
+		result.setRetCode(Constants.ACTION_FAILED);
+		result.setMsg("暂无公告，无需弹出提示框");
+		System.out.println("=======暂无公告，无需弹出提示框");
+//    	if(request.getSession().getAttribute(Constants.SESSION_USER_FORM)==null) {//用户session为空 登录已超时
+//    		result.setRetCode(Constants.ACTION_FAILED);
+//    		result.setMsg("用户session为空 登录已超时，无需弹出提示框");
+//    		System.out.println("=======用户session为空 登录已超时，无需弹出提示框");
+//    	} else {
+//    		UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
+//    		// 333s
+//    		List<NoticeForm> noticeFormList =  sysDAO.noticeManager(userForm);
+//    		if(noticeFormList!=null && noticeFormList.size()>0) {
+//    			NoticeForm noticeForm = noticeFormList.get(0);//最新的一条公共
+//    			//判断最新一条公共是否超出当前时间后5分钟
+//    			if(DateUtils.timeXJ(noticeForm.getCreateTime().substring(0,12))>=3) {//超过3分钟
+//    				result.setRetCode(Constants.ACTION_FAILED);
+//            		result.setMsg("该公告已经超过3分钟，无需弹出提示框");
+//            		System.out.println("=======该公告已经超过3分钟，无需弹出提示框");
+//    			} else {
+//    			//判断是否看过
+//	    			if(noLooked(noticeForm, request)) {
+//	    				result.setRetCode(Constants.ACTION_SUCCESS);//该公告未看过，需弹出提示框
+//	            		result.setMsg("该公告未看过，需弹出提示框");
+//	            		result.setRetObj(noticeForm);
+//	            		System.out.println("=======该公告未看过，需弹出提示框");
+//	    			} else {//已看过
+//	    				result.setRetCode(Constants.ACTION_FAILED);
+//	            		result.setMsg("该公告已经看过，无需弹出提示框");
+//	            		System.out.println("=======该公告已经看过，无需弹出提示框");
+//	    			}
+//    			}
+//    		} else {
+//    			result.setRetCode(Constants.ACTION_FAILED);
+//        		result.setMsg("暂无公告，无需弹出提示框");
+//        		System.out.println("=======暂无公告，无需弹出提示框");
+//    		}
+//    	}
 		request.setAttribute("jsonViewStr", getJsonView(result));
 		return mapping.findForward("servletResult");
     }

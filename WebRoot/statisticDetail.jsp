@@ -245,12 +245,14 @@ $(document).ready(function(){
 							</ul>
 <form action="<%=basePath %>userAction.do?method=statisticDetail" method="post" id="hidUploadForm">
 <input type="hidden" name="pageCute" id="pageCute" />
-<input type="text" name="beginTime" value="<%=request.getParameter("beginTime")==null?"":request.getParameter("beginTime") %>"/>
-<input type="text" name="endTime" value="<%=request.getParameter("endTime")==null?"":request.getParameter("endTime") %>"/>
-<input type="text" name="useTimeBegin" value="<%=request.getParameter("useTimeBegin")==null?"":request.getParameter("useTimeBegin") %>"/>
-<input type="text" name="useTimeEnd" value="<%=request.getParameter("useTimeEnd")==null?"":request.getParameter("useTimeEnd") %>"/>
-<input type="text" name="treeId" id="treeId" value="<%=request.getParameter("treeId") %>"/>
-<input type="text" name="typeId" id="typeId" value="<%=request.getParameter("typeId") %>"/>
+<input type="hidden" name="beginTime" value="<%=request.getParameter("beginTime")==null?"":request.getParameter("beginTime") %>"/>
+<input type="hidden" name="endTime" value="<%=request.getParameter("endTime")==null?"":request.getParameter("endTime") %>"/>
+<input type="hidden" name="useTimeBegin" value="<%=request.getParameter("useTimeBegin")==null?"":request.getParameter("useTimeBegin") %>"/>
+<input type="hidden" name="useTimeEnd" value="<%=request.getParameter("useTimeEnd")==null?"":request.getParameter("useTimeEnd") %>"/>
+<input type="hidden" name="treeId" id="treeId" value="<%=request.getParameter("treeId") %>"/>
+<input type="hidden" name="typeId" id="typeId" value="<%=request.getParameter("typeId") %>"/>
+<input type="hidden" name="policeTimeBegin" value="<%=request.getParameter("policeTimeBegin")==null?"":request.getParameter("policeTimeBegin") %>"/>
+<input type="hidden" name="policeTimeEnd" value="<%=request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd") %>"/>
 <script>
 function showUpload(pageCute)
 {

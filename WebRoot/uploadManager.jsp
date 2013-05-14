@@ -43,6 +43,7 @@ String fileStatsVal = request.getParameter("fileStats")==null?"":request.getPara
 String nullRemarkCheck = request.getParameter("nullRemark")==null?"":(request.getParameter("nullRemark").equals("")?"":"checked");
 String nullPoliceCodeCheck = request.getParameter("nullPoliceCode")==null?"":(request.getParameter("nullPoliceCode").equals("")?"":"checked");
 String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(request.getParameter("nullPoliceDesc").equals("")?"":"checked");
+String nullPoliceTimeCheck = request.getParameter("nullPoliceTime")==null?"":(request.getParameter("nullPoliceTime").equals("")?"":"checked");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -120,6 +121,7 @@ $(document).ready(function(){
 								<div class="mt_10">
 								<label>接警时间:</label>
 									<input class="input_168x19" id="policeTime_begin" type="text" name="policeTime_begin" value="<%=request.getParameter("policeTime_begin")==null?"":request.getParameter("policeTime_begin") %>" onclick="SelectDate(this,'yyyy-MM-dd hh:mm:ss')" readonly />&nbsp;&nbsp;-&nbsp;&nbsp;<input type="text" id="policeTime_end" class="input_168x19" name="policeTime_end" value="<%=request.getParameter("policeTime_end")==null?"":request.getParameter("policeTime_end") %>" onclick="SelectDate(this,'yyyy-MM-dd hh:mm:ss')" readonly />
+									<input type="checkbox" value="1" name="nullPoliceTime" onclick="isObjNull(this, 'policeTime_begin,policeTime_end')" <%=nullPoliceTimeCheck %>/>为空
 								</div>
 								<div class="mt_10">
 								<label>上传时间:</label>
@@ -341,6 +343,7 @@ $(document).ready(function(){
 <input type="hidden" name="nullRemark" value="<%=request.getParameter("nullRemark")==null?"":request.getParameter("nullRemark") %>" />
 <input type="hidden" name="nullPoliceCode" value="<%=request.getParameter("nullPoliceCode")==null?"":request.getParameter("nullPoliceCode") %>" />
 <input type="hidden" name="nullPoliceDesc" value="<%=request.getParameter("nullPoliceDesc")==null?"":request.getParameter("nullPoliceDesc") %>" />
+<input type="hidden" name="nullPoliceTime" value="<%=request.getParameter("nullPoliceTime")==null?"":request.getParameter("nullPoliceTime") %>" />
 <input type="hidden" name="pageCute" id="uploadManager_pageCute" />
 <input type="hidden" name="treeId" value="<%=request.getParameter("treeId")==null?"":request.getParameter("treeId") %>" />
 <input type="hidden" name="uploadName" value="<%=request.getParameter("uploadName")==null?"":request.getParameter("uploadName") %>" />
@@ -483,7 +486,10 @@ function closeDialog()
 function isObjNull(obj,objName){
 jQuery(function($) {
 	if(obj.checked){
-		$('#'+objName).val('');
+		var objNameArr = objName.split(',');
+		for(var i=0; i<objNameArr.length; i++) {
+			$('#'+objNameArr[i]).val('');
+		}
 	}
 });
 }

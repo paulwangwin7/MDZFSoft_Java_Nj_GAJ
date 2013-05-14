@@ -1,5 +1,6 @@
 <%@ page import="com.jspsmart.upload.*,com.manager.pub.bean.*" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.manager.pub.util.DateUtils"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -24,8 +25,11 @@ mySmartUpload.initialize(pageContext);
 
 //依据form的内容上传
 mySmartUpload.upload();
-String contrastTimeBegin = mySmartUpload.getRequest().getParameter("contrastTimeBegin");
-String contrastTimeEnd = mySmartUpload.getRequest().getParameter("contrastTimeEnd");
+
+String uploadTimeBegin = mySmartUpload.getRequest().getParameter("uploadTimeBegin")==null?"":mySmartUpload.getRequest().getParameter("uploadTimeBegin");
+String uploadTimeEnd = mySmartUpload.getRequest().getParameter("uploadTimeEnd")==null?"":mySmartUpload.getRequest().getParameter("uploadTimeEnd");
+String policeTimeBegin = mySmartUpload.getRequest().getParameter("policeTimeBegin")==null?"":mySmartUpload.getRequest().getParameter("policeTimeBegin");
+String policeTimeEnd = mySmartUpload.getRequest().getParameter("policeTimeEnd")==null?"":mySmartUpload.getRequest().getParameter("policeTimeEnd");
 String TreeStr = mySmartUpload.getRequest().getParameter("contrastTree");
 //将上传的文件一个一个取出来处理
 for (int i=0;i<mySmartUpload.getFiles().getCount();i++)
@@ -41,7 +45,11 @@ if (!myFile.isMissing()) {
 fileName = com.manager.pub.util.DateUtils.getChar14();
 fileName += "_"+new java.util.Date().getTime();
 fileName += "."+myFile.getFileExt();
-myFile.saveAs(SystemConfig.getSystemConfig().getFileRoot() + fileName, mySmartUpload.SAVE_PHYSICAL);
+String saveAs = SystemConfig.getSystemConfig().getFileRoot();
+fileName = "xls/" + DateUtils.getChar8() +"/"+fileName;
+java.io.File dir = new java.io.File(saveAs);
+if (!dir.exists()){dir.mkdirs();};
+myFile.saveAs(saveAs + fileName, mySmartUpload.SAVE_PHYSICAL);
 
 
 //显示此上传文件的详细信息
@@ -72,7 +80,7 @@ $.ajax({
 	dataType: 'json',
 	cache: false,
 	async: false,
-	data: {"fileName":"<%=fileName%>","treeId":"<%=TreeStr%>","uploadTimeBegin":"<%=contrastTimeBegin%>","uploadTimeEnd":"<%=contrastTimeEnd%>"},
+	data: {"fileName":"<%=fileName%>","treeId":"<%=TreeStr%>","uploadTimeBegin":"<%=uploadTimeBegin%>","uploadTimeEnd":"<%=uploadTimeEnd%>","policeTimeBegin":"<%=policeTimeBegin%>","policeTimeEnd":"<%=policeTimeEnd%>"},
 	success:function(res){
 		if(res != null)
 		{

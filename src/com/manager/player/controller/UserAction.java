@@ -125,8 +125,10 @@ public class UserAction extends DispatchAction {
 		String treeId = request.getParameter("treeId");
 		String uploadTimeBegin = request.getParameter("uploadTimeBegin");
 		String uploadTimeEnd = request.getParameter("uploadTimeEnd");
+		String policeTimeBegin = request.getParameter("policeTimeBegin")==null?"":request.getParameter("policeTimeBegin");
+		String policeTimeEnd = request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd");
 		Long policeType = new Long(1);//110接处警比对
-		List<UploadForm> uploadList = frameUploadBO.contrast(uploadTimeBegin, uploadTimeEnd, new Long(treeId), policeType);
+		List<UploadForm> uploadList = frameUploadBO.contrast(uploadTimeBegin, uploadTimeEnd, policeTimeBegin, policeTimeEnd, new Long(treeId), policeType);
 //		List<UploadForm> uploadList = new ArrayList<UploadForm>();//数据库查询结果
 //		String[] type = "1234,2345,3456".split(",");
 //		String[] time = "20130123121212,20130211121314,20130414121518".split(",");
@@ -216,11 +218,13 @@ public class UserAction extends DispatchAction {
 			}
 		}
 		//从数据库按照一时间段内全部查询出来，然后java程序去计算输出统计结果
-		String beginTime = request.getParameter("beginTime_")==null?"":request.getParameter("beginTime_");//上传时间
-		String endTime = request.getParameter("endTime_")==null?"":request.getParameter("endTime_");
+		String beginTime = request.getParameter("beginTime")==null?"":request.getParameter("beginTime");//上传时间
+		String endTime = request.getParameter("endTime")==null?"":request.getParameter("endTime");
 		String useTimeBegin = request.getParameter("useTimeBegin")==null?"":request.getParameter("useTimeBegin");//接警用时（单位：分钟）
 		String useTimeEnd = request.getParameter("useTimeEnd")==null?"":request.getParameter("useTimeEnd");
-		List<UploadForm> uploadList = frameUploadBO.statistic(userForm.getTreeId(), beginTime, endTime, useTimeBegin, useTimeEnd);
+		String policeTimeBegin = request.getParameter("policeTimeBegin")==null?"":request.getParameter("policeTimeBegin");
+		String policeTimeEnd = request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd");
+		List<UploadForm> uploadList = frameUploadBO.statistic(userForm.getTreeId(), beginTime, endTime, "", "", policeTimeBegin, policeTimeEnd);
 
 		request.setAttribute(Constants.JSP_TREE_LIST, treeList);
 		request.setAttribute("PoliceType", typeList);
@@ -254,9 +258,11 @@ public class UserAction extends DispatchAction {
 		String endTime = request.getParameter("endTime")==null?"":request.getParameter("endTime");
 		String useTimeBegin = request.getParameter("useTimeBegin")==null?"":request.getParameter("useTimeBegin");//接警用时（单位：分钟）
 		String useTimeEnd = request.getParameter("useTimeEnd")==null?"":request.getParameter("useTimeEnd");
+		String policeTimeBegin = request.getParameter("policeTimeBegin")==null?"":request.getParameter("policeTimeBegin");
+		String policeTimeEnd = request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd");
 		Long treeId = Long.parseLong(request.getParameter("treeId").toString());
 		Long typeId = Long.parseLong(request.getParameter("typeId").toString());
-		Page page = frameUploadBO.statisticDetail(treeId, typeId, beginTime, endTime, useTimeBegin, useTimeEnd, new Page(pagecute, 10));
+		Page page = frameUploadBO.statisticDetail(treeId, typeId, beginTime, endTime, useTimeBegin, useTimeEnd, policeTimeBegin, policeTimeEnd, new Page(pagecute, 10));
 
 		request.setAttribute(Constants.PAGE_INFORMATION, page);
 		return mapping.findForward("statisticDetail");
@@ -284,7 +290,9 @@ public class UserAction extends DispatchAction {
 		//从数据库按照一时间段内全部查询出来，然后java程序去计算输出统计结果
 		String beginTime = request.getParameter("beginTime")==null?"":request.getParameter("beginTime");
 		String endTime = request.getParameter("endTime")==null?"":request.getParameter("endTime");
-		List<UploadForm> uploadList = frameUploadBO.statistic(userForm.getTreeId(), beginTime, endTime, "", "");
+		String policeTimeBegin = request.getParameter("policeTimeBegin")==null?"":request.getParameter("policeTimeBegin");
+		String policeTimeEnd = request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd");
+		List<UploadForm> uploadList = frameUploadBO.statistic(userForm.getTreeId(), beginTime, endTime, "", "", policeTimeBegin, policeTimeEnd);
 
 		request.setAttribute(Constants.JSP_TREE_LIST, treeList);
 		request.setAttribute("PoliceType", typeList);
@@ -447,7 +455,7 @@ public class UserAction extends DispatchAction {
 				userForm.setUserCode(request.getParameter("userCodeStr"));
 				String queryTreeId = request.getParameter("query_treeId")==null?"":request.getParameter("query_treeId");
 				if(uf.getUserId()==0) {
-					request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserList(new Page(pagecute, 10)));
+					request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserListByAdmin(userForm, queryTreeId, new Page(pagecute, 10)));
 				} else {
 					request.setAttribute(Constants.PAGE_INFORMATION, frameUserBO.getUserList(userForm, queryTreeId, new Page(pagecute, 10)));
 				}
@@ -830,10 +838,10 @@ public class UserAction extends DispatchAction {
 			String pageCute = request.getParameter("pageCute")==null?"":request.getParameter("pageCute");
 			String uploadUserId = request.getParameter("uploadUserId")==null?"":request.getParameter("uploadUserId");
 			String fileCreateUserId = request.getParameter("fileCreateUserId")==null?"":request.getParameter("fileCreateUserId");
-			String takeTime_begin = request.getParameter("takeTime_begin")==null?"":request.getParameter("takeTime_begin").replace("-", "").replace(":", "");
-			String takeTime_end = request.getParameter("takeTime_end")==null?"":request.getParameter("takeTime_end").replace("-", "").replace(":", "");
-			String policeTime_begin = request.getParameter("policeTime_begin")==null?"":request.getParameter("policeTime_begin").replace("-", "").replace(":", "");
-			String policeTime_end = request.getParameter("policeTime_end")==null?"":request.getParameter("policeTime_end").replace("-", "").replace(":", "");
+			String takeTime_begin = request.getParameter("takeTime_begin")==null?"":request.getParameter("takeTime_begin").replace("-", "").replace(":", "").replace(" ", "");
+			String takeTime_end = request.getParameter("takeTime_end")==null?"":request.getParameter("takeTime_end").replace("-", "").replace(":", "").replace(" ", "");
+			String policeTime_begin = request.getParameter("policeTime_begin")==null?"":request.getParameter("policeTime_begin").replace("-", "").replace(":", "").replace(" ", "");
+			String policeTime_end = request.getParameter("policeTime_end")==null?"":request.getParameter("policeTime_end").replace("-", "").replace(":", "").replace(" ", "");
 			String policeCode = request.getParameter("policeCode")==null?"":request.getParameter("policeCode");
 			String policeDesc = request.getParameter("policeDesc")==null?"":request.getParameter("policeDesc");
 			String useTime_begin = request.getParameter("useTime_begin")==null?"":request.getParameter("useTime_begin").trim();
@@ -843,6 +851,7 @@ public class UserAction extends DispatchAction {
 			String nullRemark = request.getParameter("nullRemark")==null?"":request.getParameter("nullRemark");//20130417需求1.6 被检索文件备注为空
 			String nullPoliceCode = request.getParameter("nullPoliceCode")==null?"":request.getParameter("nullPoliceCode");//20130417需求1.6 被检索文件接警编号为空
 			String nullPoliceDesc = request.getParameter("nullPoliceDesc")==null?"":request.getParameter("nullPoliceDesc");//20130417需求1.6 被检索文件处警内容为空
+			String nullPoliceTime = request.getParameter("nullPoliceTime")==null?"":request.getParameter("nullPoliceTime");//20130509需求    被检索文件出警时间为空
 
 			if(useTime_begin!=null) {
 				try {
@@ -883,7 +892,7 @@ public class UserAction extends DispatchAction {
 				}
 				if(userForm.getUserId()==0) {
 					request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-							takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10),showTree, nullRemark, nullPoliceCode, nullPoliceDesc));
+							takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10),showTree, nullRemark, nullPoliceCode, nullPoliceDesc, nullPoliceTime));
 					return mapping.findForward("uploadFileShow");
 				} else {
 					if(parentTreeId!=-1)
@@ -892,12 +901,12 @@ public class UserAction extends DispatchAction {
 							parentTreeId = userForm.getTreeId();
 						}
 						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByTree(uploadName, userForm.getTreeId()+"", parentTreeId+"", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10),showTree, nullRemark, nullPoliceCode, nullPoliceDesc));
+								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10),showTree, nullRemark, nullPoliceCode, nullPoliceDesc, nullPoliceTime));
 						return mapping.findForward("uploadFileShow");
 					}
 					else {
 						request.setAttribute(Constants.PAGE_INFORMATION, frameUploadBO.uploadListByAdmin(uploadName, "", "", beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10),showTree, nullRemark, nullPoliceCode, nullPoliceDesc));
+								takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, new Page(pagecute, 10),showTree, nullRemark, nullPoliceCode, nullPoliceDesc, nullPoliceTime));
 						return mapping.findForward("uploadFileShow");
 					}
 				}

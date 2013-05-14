@@ -51,11 +51,12 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 			String fileRemark, String takeTime_begin, String takeTime_end,
 			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
 			String useTime_begin, String useTime_end, Long policeType, Page page,
-			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc,
+			String nullPoliceTime) {
 		// TODO Auto-generated method stub
 		return frameUploadDAO.uploadListByTree(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
 				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page,
-				showTree, nullRemark, nullPoliceCode, nullPoliceDesc);
+				showTree, nullRemark, nullPoliceCode, nullPoliceDesc, nullPoliceTime);
 	}
 
 	public Page uploadListByAdmin(String uploadName, String treeId,
@@ -64,10 +65,11 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 			String fileRemark, String takeTime_begin, String takeTime_end,
 			String policeCode, String policeTime_begin, String policeTime_end, String policeDesc,
 			String useTime_begin, String useTime_end, Long policeType, Page page,
-			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc,
+			String nullPoliceTime) {
 		// TODO Auto-generated method stub
 		return frameUploadDAO.uploadListByAdmin(uploadName, treeId, parentTreeId, beginTime, endTime, uploadUserId, fileCreateUserId, fileStats, fileRemark,
-				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page, showTree, nullRemark, nullPoliceCode, nullPoliceDesc);
+				takeTime_begin, takeTime_end, policeCode, policeTime_begin, policeTime_end, policeDesc, useTime_begin, useTime_end, policeType, page, showTree, nullRemark, nullPoliceCode, nullPoliceDesc, nullPoliceTime);
 	}
 
 	@Override
@@ -148,22 +150,23 @@ public class FrameUploadBOImpl implements FrameUploadBO {
 	}
 
 	@Override
-	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd) {
+	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, String policeTimeBegin, String policeTimeEnd) {
 		// TODO Auto-generated method stub
-		return frameUploadDAO.statistic(treeId, beginTime, endTime, useTimeBegin, useTimeEnd);
+		return frameUploadDAO.statistic(treeId, beginTime, endTime, useTimeBegin, useTimeEnd, policeTimeBegin, policeTimeEnd);
 	}
 
 	@Override
-	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, Page page) {
+	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd,
+			String policeTimeBegin, String policeTimeEnd, Page page) {
 		// TODO Auto-generated method stub
 //		return frameUploadDAO.statistic(treeId, beginTime, endTime, useTimeBegin, useTimeEnd);
-		return frameUploadDAO.statisticDetail(treeId, typeId, beginTime, endTime, useTimeBegin, useTimeEnd, page);
+		return frameUploadDAO.statisticDetail(treeId, typeId, beginTime, endTime, useTimeBegin, useTimeEnd, policeTimeBegin, policeTimeEnd, page);
 	}
 
 	@Override
-	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, Long treeId, Long policeType) {
+	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, String policeTimeBegin, String policeTimeEnd, Long treeId, Long policeType) {
 		// TODO Auto-generated method stub
-		return frameUploadDAO.contrast(uploadTimeBegin, uploadTimeEnd, treeId, policeType);
+		return frameUploadDAO.contrast(uploadTimeBegin, uploadTimeEnd, policeTimeBegin, policeTimeEnd, treeId, policeType);
 	}
 
 	public List<UploadForm> expiredSysDekList(int expiredDays) {

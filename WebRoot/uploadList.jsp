@@ -208,25 +208,25 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 <table>
 <tr>
 <td>视频类型：&nbsp;&nbsp;</td>
-<td><jsp:include page="common/policeType.jsp"></jsp:include></td>
+<td><jsp:include page="common/policeType.jsp?onchangeFunc=policeTypeChange()"></jsp:include></td>
 </tr>
 <tr style="display:none">
 <td>录制时间：</td>
 <td><input name="_take_time_" id="_take_time_" style="width:170px" onclick="SelectDate(this,'yyyyMMddhhmmss')" readonly /></td>
 </tr>
-<tr>
+<tr id="hid_1">
 <td>接警编号：</td>
 <td><input name="_police_code_" id="_police_code_" style="width:170px" maxlength="30" /></td>
 </tr>
-<tr>
+<tr id="hid_2">
 <td>接警时间：</td>
 <td><input name="_police_time_" id="_police_time_" style="width:170px" /></td>
 </tr>
-<tr>
+<tr id="hid_3">
 <td>文件备注：</td>
 <td><textarea name="_file_remark_" id="_file_remark_" style="width:200px;height:50px" /></textarea></td>
 </tr>
-<tr>
+<tr id="hid_4">
 <td>简要警情及<br/>处警结果：</td>
 <td><textarea name="_police_desc_" id="_police_desc_" style="width:200px;height:50px" /></textarea></td>
 <tr>
@@ -393,6 +393,7 @@ jQuery(function($) {
 	$("#_fileId_").val($("#fileId_"+forIndex).val());
 	showObj("uploadDetail");
 });
+policeTypeChange();
 }
 
 function isObjNull(obj,objName){
@@ -416,5 +417,29 @@ function mineUpload_(pagecute){
 	var nullPoliceCodeStr = $('#nullPoliceCode_').val();
 	var nullPoliceDescStr = $('#nullPoliceDesc_').val();
 	mineUpload(pagecute, $('#beginTime_').val(), $('#endTime_').val(), $('#fileRemark_').val(), $('#policeCode_').val(), $('#policeDesc_').val(), nullRemarkStr, nullPoliceCodeStr, nullPoliceDescStr);
+}
+function policeTypeChange() {
+jQuery(function($) {
+	var policeTypeVal = $('#policeType').val();
+	$('#hid_1').css('display','none');//接警编号
+	$('#hid_2').css('display','none');//接警时间
+	$('#hid_3').css('display','none');//文件备注
+	$('#hid_4').css('display','none');//简要警情
+	//$('#hid_5').css('display','block'); ??嫌疑人??
+	switch(parseInt(policeTypeVal)) {
+		case 1 : {
+			$('#hid_1').css('display','block');
+			$('#hid_2').css('display','block');
+			$('#hid_3').css('display','block');
+			$('#hid_4').css('display','block');
+		}; break;
+		case 2 : {$('#hid_3').css('display','block');}; break;
+		case 3 : {$('#hid_3').css('display','block');$('#_file_remark_').val('嫌疑人:');}; break;
+		case 4 : {$('#hid_3').css('display','block');$('#_file_remark_').val('事件名称:\r\n发生时间:');}; break;
+		case 5 : {$('#hid_3').css('display','block');$('#_file_remark_').val('调解时间:\r\n调解内容:');}; break;
+		case 6 : {$('#hid_3').css('display','block');}; break;
+		default : {}; break;
+	}
+});
 }
 </script>

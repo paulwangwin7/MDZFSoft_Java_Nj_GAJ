@@ -112,7 +112,8 @@ public interface FrameUploadBO {
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
 								String useTime_begin, String useTime_end, Long policeType, Page page,
-								String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc);
+								String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc,
+								String nullPoliceTime);
 
 	/**
 	 * 管理员文件查询
@@ -144,7 +145,8 @@ public interface FrameUploadBO {
 								String takeTime_begin, String takeTime_end, String policeCode,
 								String policeTime_begin, String policeTime_end, String policeDesc,
 								String useTime_begin, String useTime_end, Long policeType, Page page,
-								String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc);
+								String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc,
+								String nullPoliceTime);
 
 	/**
 	 * 上传列表数据统计
@@ -205,7 +207,7 @@ public interface FrameUploadBO {
 	 * @param response
 	 * @return
 	 */
-	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd);
+	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, String policeTimeBegin, String policeTimeEnd);
 
 	/**
 	 * 20130417需求1.8
@@ -215,7 +217,8 @@ public interface FrameUploadBO {
 	 * @param policeType
 	 * @return
 	 */
-	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, Long treeId, Long policeType);
+	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, String policeTimeBegin, String policeTimeEnd, Long treeId, Long policeType);
 
-	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, Page page);
+	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd,
+			String policeTimeBegin, String policeTimeEnd, Page page);
 }

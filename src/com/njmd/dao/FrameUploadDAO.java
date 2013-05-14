@@ -4,7 +4,6 @@ import com.manager.pub.bean.Page;
 import com.manager.pub.bean.PoliceTypeForm;
 import com.manager.pub.bean.UploadForm;
 import com.manager.pub.util.Constants;
-import com.manager.pub.util.DateUtils;
 import com.njmd.dao.BaseHibernateDAO;
 import com.njmd.pojo.FramePoliceType;
 import com.njmd.pojo.FrameTree;
@@ -344,7 +343,8 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			String takeTime_begin, String takeTime_end, String policeCode,
 			String policeTime_begin, String policeTime_end, String policeDesc,
 			String useTime_begin, String useTime_end, Long policeType, Page page,
-			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc,
+			String nullPoliceTime) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -356,7 +356,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 				queryString.append(" and model.tree2Id = ?");
 			}
 			if(policeType!=null && policeType!=0) {
-				queryString.append(" and model.policeType = "+policeType);
+				if(policeType==-1) {
+					queryString.append(" and model.policeType is null");
+				} else {
+					queryString.append(" and model.policeType = "+policeType);
+				}
 			}
 			if(useTime_begin.equals("") || useTime_end.equals("")) {
 
@@ -374,10 +378,14 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!nullPoliceCode.equals("")) {
 				queryString.append(" and model.policeCode is null");
 			}
-			if(policeTime_begin.equals("") || policeTime_end.equals("")) {
-
+			if(nullPoliceTime.equals("")) {
+				if(policeTime_begin.equals("") || policeTime_end.equals("")) {
+	
+				} else {
+					queryString.append(" and model.policeTime >='"+policeTime_begin+"' and model.policeTime <='"+policeTime_end+"'");
+				}
 			} else {
-				queryString.append(" and model.policeTime >='"+policeTime_begin+"' and model.policeTime <='"+policeTime_end+"'");
+				queryString.append(" and model.policeTime is null");
 			}
 			if(!policeDesc.equals("") && nullPoliceDesc.equals("")) {
 				queryString.append(" and model.policeDesc like '%"+policeDesc+"%'");
@@ -465,7 +473,8 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			String takeTime_begin, String takeTime_end, String policeCode,
 			String policeTime_begin, String policeTime_end, String policeDesc,
 			String useTime_begin, String useTime_end, Long policeType, Page page,
-			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc) {
+			String showTree, String nullRemark, String nullPoliceCode, String nullPoliceDesc,
+			String nullPoliceTime) {
 		Session session = getSession();
 		try {
 			session.clear();
@@ -495,10 +504,14 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!nullPoliceCode.equals("")) {
 				queryString.append(" and model.policeCode is null");
 			}
-			if(policeTime_begin.equals("") || policeTime_end.equals("")) {
-
+			if(nullPoliceTime.equals("")) {
+				if(policeTime_begin.equals("") || policeTime_end.equals("")) {
+	
+				} else {
+					queryString.append(" and model.policeTime >='"+policeTime_begin+"' and model.policeTime <='"+policeTime_end+"'");
+				}
 			} else {
-				queryString.append(" and model.policeTime >='"+policeTime_begin+"' and model.policeTime <='"+policeTime_end+"'");
+				queryString.append(" and model.policeTime is null");
 			}
 			if(!policeDesc.equals("") && nullPoliceDesc.equals("")) {
 				queryString.append(" and model.policeDesc like '%"+policeDesc+"%'");
@@ -868,7 +881,8 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	}
 
 	@SuppressWarnings("finally")
-	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd) {
+	public List<UploadForm> statistic(Long treeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd,
+			String policeTimeBegin, String policeTimeEnd) {
 		List<UploadForm> results = null;
 		Session session = getSession();
 		try {
@@ -886,6 +900,9 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
 				queryString += whereOrAnd+" model.useTime >= ? and model.useTime <= ?";
 			}
+			if(!policeTimeBegin.equals("") && !policeTimeEnd.equals("")) {
+				queryString += whereOrAnd+" model.policeTime >= ? and model.policeTime <= ?";
+			}
 			Query queryObject = session.createQuery(queryString);
 			int paramIndex = 0;
 			if(!beginTime.equals("") && !endTime.equals("")) {
@@ -894,7 +911,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			}
 			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
 				queryObject.setParameter(paramIndex, new Long(useTimeBegin));paramIndex++;
-				queryObject.setParameter(paramIndex, new Long(useTimeEnd));
+				queryObject.setParameter(paramIndex, new Long(useTimeEnd));paramIndex++;
+			}
+			if(!policeTimeBegin.equals("") && !policeTimeEnd.equals("")) {
+				queryObject.setParameter(paramIndex, policeTimeBegin);paramIndex++;
+				queryObject.setParameter(paramIndex, policeTimeEnd);
 			}
 			List querylist = queryObject.list();
 			if(querylist!=null && querylist.size()>0) {
@@ -917,7 +938,8 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	}
 
 	@SuppressWarnings("finally")
-	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd, Page page) {
+	public Page statisticDetail(Long treeId, Long typeId, String beginTime, String endTime, String useTimeBegin, String useTimeEnd,
+			String policeTimeBegin, String policeTimeEnd, Page page) {
 		List<UploadForm> results = null;
 		Session session = getSession();
 		try {
@@ -943,6 +965,10 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
 				queryString += whereOrAnd+" model.useTime >= ? and model.useTime <= ?";
 			}
+			if(!policeTimeBegin.equals("") && !policeTimeEnd.equals("")) {
+				queryString += whereOrAnd+" model.policeTime >= ? and model.policeTime <= ?";
+				whereOrAnd = " and";
+			}
 			Query queryObject = session.createQuery(queryString);
 			int paramIndex = 0;
 			if(typeId!=null && typeId>0) {
@@ -954,7 +980,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 			}
 			if(!useTimeBegin.equals("") && !useTimeEnd.equals("")) {
 				queryObject.setParameter(paramIndex, new Long(useTimeBegin));paramIndex++;
-				queryObject.setParameter(paramIndex, new Long(useTimeEnd));
+				queryObject.setParameter(paramIndex, new Long(useTimeEnd));paramIndex++;
+			}
+			if(!policeTimeBegin.equals("") && !policeTimeEnd.equals("")) {
+				queryObject.setParameter(paramIndex, policeTimeBegin);paramIndex++;
+				queryObject.setParameter(paramIndex, policeTimeEnd);
 			}
 			page.setTotal(queryObject.list().size());
 			queryObject.setFirstResult((page.getPageCute()-1)*page.getDbLine());
@@ -976,16 +1006,30 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 	}
 
 	@SuppressWarnings("finally")
-	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, Long treeId, Long policeType) {
+	public List<UploadForm> contrast(String uploadTimeBegin, String uploadTimeEnd, String policeTimeBegin, String policeTimeEnd, Long treeId, Long policeType) {
 		List<UploadForm> results = null;
 		Session session = getSession();
 		try {
 			session.clear();
-			String queryString = "from FrameUpload as model where (model.tree2Id = "+treeId+" or model.tree1Id = "+treeId+") and substr(model.uploadTime,0,8) >= ? and substr(model.uploadTime,0,8) <= ? and model.policeType = ?";
+			String queryString = "from FrameUpload as model where (model.tree2Id = "+treeId+" or model.tree1Id = "+treeId+")";
+			if(!uploadTimeBegin.equals("") && !uploadTimeEnd.equals("")) {
+				queryString += " and substr(model.uploadTime,0,8) >= ? and substr(model.uploadTime,0,8) <= ?";
+			}
+			if(!policeTimeBegin.equals("") && !policeTimeEnd.equals("")) {
+				queryString += " and substr(model.policeTime,0,8) >= ? and substr(model.policeTime,0,8) <= ?";
+			}
+			queryString += " and model.policeType = ?";
 			Query queryObject = session.createQuery(queryString);
-			queryObject.setParameter(0, uploadTimeBegin);
-			queryObject.setParameter(1, uploadTimeEnd);
-			queryObject.setParameter(2, policeType);
+			int paramIndex = 0;
+			if(!uploadTimeBegin.equals("") && !uploadTimeEnd.equals("")) {
+				queryObject.setParameter(paramIndex, uploadTimeBegin);paramIndex++;
+				queryObject.setParameter(paramIndex, uploadTimeEnd);paramIndex++;
+			}
+			if(!policeTimeBegin.equals("") && !policeTimeEnd.equals("")) {
+				queryObject.setParameter(paramIndex, policeTimeBegin);paramIndex++;
+				queryObject.setParameter(paramIndex, policeTimeEnd);paramIndex++;
+			}
+			queryObject.setParameter(paramIndex, policeType);
 			List querylist = queryObject.list();
 			if(querylist!=null && querylist.size()>0) {
 				results = new ArrayList<UploadForm>();

@@ -43,7 +43,8 @@ function popNotice() {
 	});
 }
 
-setInterval("popNotice()", 60000);
+//setInterval("popNotice()", 180000);
+//setTimeout("popNotice()", 180000);
 </script>
 <div id="noticeDetailShow" icon="icon-save" style="display:none" class="boxcontent">
 <iframe id="noticeDetailFrame" src="" width="570px" height="420px" frameborder="0" scrolling="no" /></iframe>

@@ -101,12 +101,14 @@ List<PoliceTypeForm> typeList = (List<PoliceTypeForm>)request.getAttribute("Poli
 %>
 </table>
 <form id="detailForm" action="<%=basePath %>userAction.do?method=statisticDetail" method="post" target="_blank">
-<input type="text" name="beginTime" value="<%=beginTime %>"/>
-<input type="text" name="endTime" value="<%=endTime %>"/>
-<input type="text" name="useTimeBegin" value="<%=useTimeBegin %>"/>
-<input type="text" name="useTimeEnd" value="<%=useTimeEnd %>"/>
-<input type="text" name="treeId" id="treeId" value=""/>
-<input type="text" name="typeId" id="typeId" value=""/>
+<input type="hidden" name="beginTime" value="<%=beginTime %>"/>
+<input type="hidden" name="endTime" value="<%=endTime %>"/>
+<input type="hidden" name="useTimeBegin" value="<%=useTimeBegin %>"/>
+<input type="hidden" name="useTimeEnd" value="<%=useTimeEnd %>"/>
+<input type="hidden" name="treeId" id="treeId" value=""/>
+<input type="hidden" name="typeId" id="typeId" value=""/>
+<input type="hidden" name="policeTimeBegin" value="<%=request.getParameter("policeTimeBegin")==null?"":request.getParameter("policeTimeBegin") %>"/>
+<input type="hidden" name="policeTimeEnd" value="<%=request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd") %>"/>
 </form>
 <script>
 function showDetail(treeId, typeId){

@@ -498,6 +498,7 @@ jQuery(function($) {
 						$('#policeType').append("<option value='"+res.retObj[i].typeId+"'>"+res.retObj[i].typeName+"</option>");
 					}
 				}
+				$('#policeType').append("<option value='-1'>未分类</option>");
 			}
 			else{
 				//

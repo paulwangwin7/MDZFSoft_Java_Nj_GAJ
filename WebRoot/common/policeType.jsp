@@ -1,5 +1,8 @@
 <%@ page language="java" import="java.util.*,com.manager.pub.bean.*" pageEncoding="UTF-8"%>
-<select id="policeType" name="policeType">
+<%
+String onchangeFunc = request.getParameter("onchangeFunc")==null?"":request.getParameter("onchangeFunc");
+%>
+<select id="policeType" name="policeType" onchange="<%=onchangeFunc %>">
 <%
 	String reqTypeId = request.getParameter("policeType")==null?"":request.getParameter("policeType");
 	boolean showAll = request.getParameter("showAll")==null?false:true;

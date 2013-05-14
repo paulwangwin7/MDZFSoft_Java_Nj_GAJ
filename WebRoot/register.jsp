@@ -9,6 +9,7 @@
 
 	String req_loginName = "";
 	String req_loginPswd = SystemConfig.getSystemConfig().getResetPswd();
+	String req_userIdCard = "";
 	String req_userName = "";
 	String req_userCode = "";
 	String req_sex = "";
@@ -27,6 +28,7 @@
 		{
 			req_loginName = userForm.getLoginName();
 			req_loginPswd = userForm.getLoginPswd();
+			req_userIdCard = userForm.getUserIdCard();
 			req_userName = userForm.getUserName();
 			req_userCode = userForm.getUserCode();
 			req_sex = userForm.getSex();
@@ -74,6 +76,10 @@
 									<li class="form_item">
 										<label class="input_hd">登录密码:</label>
 										<input type="password" class="input_130x20" id="req_loginPswd" name="loginPswd" value="<%=req_loginPswd %>" readonly />
+									</li>
+									<li class="form_item">
+										<label class="input_hd">身份证号:</label>
+										<input type="text" class="input_130x20" id="req_userIdCard" name="userIdCard" value="<%=req_userIdCard %>" />
 									</li>
 									<li class="form_item">
 										<label class="input_hd">姓&nbsp;&nbsp;&nbsp;&nbsp;名:</label>
