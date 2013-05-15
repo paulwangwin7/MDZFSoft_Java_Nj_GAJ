@@ -47,7 +47,7 @@ fileName += "_"+new java.util.Date().getTime();
 fileName += "."+myFile.getFileExt();
 String saveAs = SystemConfig.getSystemConfig().getFileRoot();
 fileName = "xls/" + DateUtils.getChar8() +"/"+fileName;
-java.io.File dir = new java.io.File(saveAs);
+java.io.File dir = new java.io.File(saveAs+"xls/" + DateUtils.getChar8() +"/");
 if (!dir.exists()){dir.mkdirs();};
 myFile.saveAs(saveAs + fileName, mySmartUpload.SAVE_PHYSICAL);
 
