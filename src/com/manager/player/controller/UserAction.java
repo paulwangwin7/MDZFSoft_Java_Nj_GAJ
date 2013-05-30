@@ -62,7 +62,7 @@ public class UserAction extends DispatchAction {
 	private FileUtils fileUtils = new FileUtils();
 
 	private JspForm jspForm;
-	private UploadForm uploadForm;
+//	private UploadForm uploadForm;
 	private InformationFrameForm informationFrameForm;
 	private String frame_information = "frame_information";
 	private int userActionCode = 0;//0-运行操作 1-用户登录已超时 2-用户不在此权限范围
@@ -655,7 +655,7 @@ public class UserAction extends DispatchAction {
 		}
 		if(uploadSuccess)
 		{
-			uploadForm = new UploadForm();
+			UploadForm uploadForm = new UploadForm();
 			UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
 			uploadForm.setUserId(userForm.getUserId());
 			uploadForm.setEditId(Long.parseLong(request.getParameter("upload_editId")));
@@ -716,7 +716,7 @@ public class UserAction extends DispatchAction {
 			switch(frameUploadBO.uploadSave(uploadForm))//0-添加成功；1-添加失败 系统超时~
 			{
 				case 0 : {
-//					userLog(request, "上传文件： "+uploadForm.getUploadName()+"<"+uploadForm.getPlayPath()+"> 上传成功");
+					userLog(request, "上传文件： "+uploadForm.getUploadName()+"<"+uploadForm.getPlayPath()+"> 上传成功");
 					return mapping.findForward("db");
 				}
 				case 1 : informationFrameForm = new InformationFrameForm("上传失败 系统超时~","","1","tab_wjsc","文件上传");break;

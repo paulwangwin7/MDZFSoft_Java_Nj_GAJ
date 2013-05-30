@@ -74,9 +74,48 @@ public class Constants
 			}
 		}
 	}
+
+	public static boolean hasLength(String str)
+    {
+        return str != null && str.length() > 0;
+    }
+
+	public static String trimRight(String source){
+        if(!hasLength(source))
+            return source;
+        if(source.trim().length()==0)
+            return "";
+        int index=0;
+        for(int i=source.length()-1;i>=0;i--){
+            if(Character.isWhitespace(source.charAt(i))){
+                index=i;
+            }else{
+                break;
+            }
+        }
+        return index!=0 ? source.substring(0,index): source;
+    }
+    
+    public static String trimLeft(String source){
+        if(!hasLength(source))
+            return source;
+        if(source.trim().length()==0)
+            return "";
+        int index=0;
+        for(int i=0;i<source.length();i++){
+            if(Character.isWhitespace(source.charAt(i))){
+                index=i+1;
+            }else{
+                break;
+            }
+        }
+        return index!=0 ? source.substring(index): source;
+    }
+
 	
 	public static void main(String[] args)
 	{
 		System.out.println(timeFormat("20101130133553","1"));
+		System.out.println("|"+trimRight(trimLeft(""))+"|");
 	}
 }

@@ -71,7 +71,7 @@ public class ServletAction extends DispatchAction{
 		List<FrameUser> frameUserList = frameUserBO.getUserListByIdCard(idCard);
 		if(frameUserList==null || frameUserList.size()==0) {
 			result.setRetCode(Constants.ACTION_FAILED);
-			result.setMsg("请与管理员联系，您的身份证信息尚未录入系统，请输入帐号密码进行登录~");
+			result.setMsg("请与管理员联系，您的身份证信息尚未录入系统~");
 		}
 		else {
 			userForm = new UserForm();
@@ -1150,6 +1150,7 @@ public class ServletAction extends DispatchAction{
 			String take_time = request.getParameter("_take_time_")==null?"":request.getParameter("_take_time_");
 			String file_remark = request.getParameter("file_remark")==null?"":request.getParameter("file_remark");
 			String police_code = request.getParameter("police_code")==null?"":request.getParameter("police_code");
+			police_code = Constants.trimRight(Constants.trimLeft(police_code));//前后trim
 			String police_time = request.getParameter("police_time")==null?"":request.getParameter("police_time");
 			String police_desc = request.getParameter("police_desc")==null?"":request.getParameter("police_desc");
 			String police_type = request.getParameter("policeType")==null?"":request.getParameter("policeType");

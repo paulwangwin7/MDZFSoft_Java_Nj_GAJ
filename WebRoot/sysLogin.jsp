@@ -7,7 +7,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>名都执法记录仪管理系统软件 V2.0</title>
+<title>建邺分局警用视音频应用管理系统 V2.0</title>
 <jsp:include page="common/tag.jsp" />
 <script type="text/javascript" src="<%=basePath %>pagejs/login.js"></script>
 </head>

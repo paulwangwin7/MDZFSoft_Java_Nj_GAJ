@@ -130,17 +130,17 @@ function changeCheckImg()
  */
 function toUkeyLogin(ukeyUrl)
 {
-	$('#ukeyLoginForm').attr('action',ukeyUrl+'/ukeyDemo');
-	alert($('#ukeyLoginForm').attr('action'));
+	$('#ukeyLoginForm').attr('action',ukeyUrl+':8080/bsdemo/');
+	//alert($('#ukeyLoginForm').attr('action'));
 	$('#ukeyLoginForm').submit();
 }
 
 /**
  * ukey登录
  */
-function ukeyLogin(idCard)
+function ukeyLogin(idCard,welcomeName)
 {
-	alert(idCard);
+	//alert(idCard);
 	if(idCard==null) {
 		alert('未能正确获取身份证号');
 	} else if(idCard.length<15 || idCard.length>18) {
@@ -164,7 +164,7 @@ function ukeyLogin(idCard)
 					}
 					else
 					{
-						alert(res.msg);
+						alert(res.msg+'  欢迎您，'+welcomeName);
 						setTimeout(function(){location.href=contextPath()+"/userAction.do?method=userMain";},1000);
 					}
 				}
