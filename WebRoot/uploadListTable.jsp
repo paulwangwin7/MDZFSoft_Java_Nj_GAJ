@@ -62,8 +62,8 @@ String fileStatsVal = request.getParameter("fileStats")==null?"":request.getPara
 						<th width="220">上传文件名</th>
 						<th width="70">文件类型</th>
 						<th width="80">上传时间</th>
-						<th width="60">上传人</th>
-						<th width="60">录制人</th>
+						<th width="60">上传民警</th>
+						<th width="60">处警民警</th>
 						<th>接警编号</th>
 						<th width="80">接警时间</th>
 						<th width="80">录制时间</th>

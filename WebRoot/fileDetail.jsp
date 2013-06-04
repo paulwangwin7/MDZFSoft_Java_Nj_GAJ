@@ -36,7 +36,7 @@ if(uploadForm!=null)
   <td><%=map.get(uploadForm.getPoliceType()) %></td>
   </tr>
   <tr>
-  <th>上&nbsp;传&nbsp;人</th>
+  <th>上传民警</th>
   <td><%=uploadForm.getUserName() %>（<%=uploadForm.getTreeName() %>）</td>
   </tr>
   <tr>
@@ -44,7 +44,7 @@ if(uploadForm!=null)
   <td><%=uploadForm.getUploadTime() %></td>
   </tr>
   <tr>
-  <th>录&nbsp;制&nbsp;人</th>
+  <th>处警民警</th>
   <td><%=uploadForm.getEditName() %></td>
   </tr>
   <tr>

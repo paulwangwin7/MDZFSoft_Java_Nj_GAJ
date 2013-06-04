@@ -784,6 +784,12 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		uploadForm.setUserName(findByUserId(frameUpload.getUserId()).getUserName());
 		uploadForm.setEditId(frameUpload.getEditId());
 		uploadForm.setEditName(findByUserId(frameUpload.getEditId()).getUserName());
+		
+		//EditBy 孙强伟 ，增加上传人所属部门，由于findByTreeId和findByUserId返回的值为null，如果为null时，再调用其方法会报错。
+		try {
+			uploadForm.setTreeEditName(findByTreeId(findByUserId(frameUpload.getEditId()).getTreeId()).getTreeName());
+		} catch (Exception e) {
+		}
 		uploadForm.setUploadName(frameUpload.getUploadName());
 		uploadForm.setPlayPath(frameUpload.getPlayPath());
 		uploadForm.setShowPath(frameUpload.getShowPath());
@@ -792,7 +798,11 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		uploadForm.setFileState(frameUpload.getFileState());
 		uploadForm.setTree1Id(frameUpload.getTree1Id());
 		uploadForm.setTree2Id(frameUpload.getTree2Id());
-		uploadForm.setTreeName(findByTreeId(frameUpload.getTree1Id()).getTreeName());//显示的是上传人的部门名称
+		//EditBy 孙强伟 ，增加上传人所属部门，由于findByTreeId和findByUserId返回的值为null，如果为null时，再调用其方法会报错。
+		try {
+			uploadForm.setTreeName(findByTreeId(frameUpload.getTree1Id()).getTreeName());//显示的是上传人的部门名称
+		} catch (Exception e) {
+		}
 		uploadForm.setFileStats(frameUpload.getFileStats());
 		uploadForm.setFileRemark(frameUpload.getFileRemark());
 		uploadForm.setIpAddr(frameUpload.getIpAddr());

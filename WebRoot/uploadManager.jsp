@@ -94,9 +94,9 @@ $(document).ready(function(){
 									<input type="text" class="input_38x19" name="useTime_begin" id="useTime_begin" value="<%=request.getParameter("useTime_begin")==null?"":request.getParameter("useTime_begin") %>" />&nbsp;&nbsp;-&nbsp;&nbsp;<input type="text" class="input_38x19" name="useTime_end" id="useTime_end" value="<%=request.getParameter("useTime_end")==null?"":request.getParameter("useTime_end") %>" /> 分钟内
 								</div>
 								<div class="mt_10">
-								<label>上&nbsp;传&nbsp;人:</label>
+								<label>上传民警:</label>
 									<input type="text" class="input_168x19" name="uploadUserName" id="userName" readonly onclick="userChoose('1212')" value="<%=request.getParameter("uploadUserName")==null?"":request.getParameter("uploadUserName") %>" />&nbsp;&nbsp;&nbsp;&nbsp;
-								<label>录&nbsp;制&nbsp;人:</label><input type="text" class="input_168x19" name="uploadEditName" id="editName" readonly onclick="userChoose()" value="<%=request.getParameter("uploadEditName")==null?"":request.getParameter("uploadEditName") %>"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								<label>处警民警:</label><input type="text" class="input_168x19" name="uploadEditName" id="editName" readonly onclick="userChoose()" value="<%=request.getParameter("uploadEditName")==null?"":request.getParameter("uploadEditName") %>"/>&nbsp;&nbsp;&nbsp;&nbsp;
 								<label style="display:none">文件重要性:</label></div>
 								<div class="mt_10">
 								<label>接警编号:</label>
@@ -273,11 +273,15 @@ $(document).ready(function(){
 												%></span>
 											</li>
 											<li>
-												<span class="hd">录 制 人：</span>
+												<span class="hd">处警民警：</span>
 												<span class="bd"><%=uploadForm.getEditName() %></span>
 											</li>
 											<li>
-												<span class="hd">上 传 人：</span>
+												<span class="hd">所属部门：</span>
+												<span class="bd"><%=uploadForm.getTreeEditName() %></span>
+											</li>
+											<li>
+												<span class="hd">上传民警：</span>
 												<span class="bd"><%=uploadForm.getUserName() %></span>
 											</li>
 										</ul>

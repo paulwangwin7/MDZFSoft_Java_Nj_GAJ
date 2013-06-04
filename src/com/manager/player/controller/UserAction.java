@@ -1,6 +1,12 @@
 package com.manager.player.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +19,6 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.write.Label;
-import jxl.write.WritableCell;
-import jxl.write.WritableCellFormat;
-import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
@@ -23,6 +26,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.skife.csv.CSVReader;
+import org.skife.csv.SimpleReader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -129,6 +134,9 @@ public class UserAction extends DispatchAction {
 		String policeTimeEnd = request.getParameter("policeTimeEnd")==null?"":request.getParameter("policeTimeEnd");
 		Long policeType = new Long(1);//110接处警比对
 		List<UploadForm> uploadList = frameUploadBO.contrast(uploadTimeBegin, uploadTimeEnd, policeTimeBegin, policeTimeEnd, new Long(treeId), policeType);
+		//EditBy 孙强伟 ,20130603 ,修复,当uploadList为null时,后面的操作会出现空指针异常,因此必须这此边进行补救
+		if(null==uploadList)
+			uploadList=new ArrayList<UploadForm>();
 //		List<UploadForm> uploadList = new ArrayList<UploadForm>();//数据库查询结果
 //		String[] type = "1234,2345,3456".split(",");
 //		String[] time = "20130123121212,20130211121314,20130414121518".split(",");
@@ -140,26 +148,67 @@ public class UserAction extends DispatchAction {
 //			uploadList.add(bean);
 //		}
 		List<String> policeCode = new ArrayList<String>();//接警编号
-		Workbook workbook;
-		Sheet sheet;
-		String[][] rc = null;
-		try {
-//			workbook = Workbook.getWorkbook(new File("c:/upload/test.xls"));
-			System.out.println(SystemConfig.getSystemConfig().getFileRoot() + fileName);
-			workbook = Workbook.getWorkbook(new File(SystemConfig.getSystemConfig().getFileRoot() + fileName));
-			sheet = workbook.getSheet(0);// 读取第一个工作表
-			int colnum = sheet.getColumns();// 得到列数
-			int row = sheet.getRows();// 得到行数
-			rc = new String[row][colnum];
-			colnum = 1;// 这里设置只读取第一列的信息
-			for (int j = 1; j < row; j++) {// j为行 这里设置第一行为标题，不被作为内容读取
-				for (int i = 0; i < colnum; i++) {// i为列
-					Cell cell = sheet.getCell(i, j);
-					String cellContent = cell.getContents();//获取内容
-					policeCode.add(cellContent);
+		
+//		20130603 EditBy 孙强伟 ，修改文件上传时使用csv格式上传的解析
+		if(fileName.toString().endsWith(".csv")){
+			try {
+				BufferedReader in=new BufferedReader(new InputStreamReader(new FileInputStream(SystemConfig.getSystemConfig().getFileRoot() + fileName)));
+				CSVReader reader=new SimpleReader();
+				List items=reader.parse(in);
+				in.close();
+				if(items.size()>10001){
+					result.setRetCode(1);
+					result.setRetObj("对不起,您上传的CSV文件中的记录数超过了最大可处理记录数(10000),请重新上传!");
+					request.setAttribute("jsonViewStr", getJsonView(result));
+					return mapping.findForward("servletResult");
 				}
+				
+				for(int i=1;i<items.size();i++){
+					String[] item=(String[])items.get(i);
+					if(item.length>0)
+						policeCode.add(item[0]);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.setRetCode(1);
+				result.setRetObj("对不起,您上传的CSV文件在解析的过程中出现错误,请检查其文件的正确性!");
+				request.setAttribute("jsonViewStr", getJsonView(result));
+				return mapping.findForward("servletResult");
 			}
-			WritableWorkbook wwb = Workbook.createWorkbook(new File(SystemConfig.getSystemConfig().getFileRoot() + fileName));
+			
+		}else{
+			Workbook workbook;
+			Sheet sheet;
+//			String[][] rc = null;
+			try {
+	//			workbook = Workbook.getWorkbook(new File("c:/upload/test.xls"));
+				System.out.println(SystemConfig.getSystemConfig().getFileRoot() + fileName);
+				workbook = Workbook.getWorkbook(new File(SystemConfig.getSystemConfig().getFileRoot() + fileName));
+				sheet = workbook.getSheet(0);// 读取第一个工作表
+				int colnum = sheet.getColumns();// 得到列数
+				int row = sheet.getRows();// 得到行数
+//				rc = new String[row][colnum];
+				colnum = 1;// 这里设置只读取第一列的信息
+				for (int j = 1; j < row; j++) {// j为行 这里设置第一行为标题，不被作为内容读取
+					for (int i = 0; i < colnum; i++) {// i为列
+						Cell cell = sheet.getCell(i, j);
+						String cellContent = cell.getContents();//获取内容
+						policeCode.add(cellContent);
+					}
+				}
+				workbook.close();
+			} catch (Exception e) {
+				System.out.print(e.getMessage());
+				result.setRetCode(1);
+				result.setRetObj("对不起,您上传的Excel文件(97版本)在解析的过程中出现错误,请检查其文件的正确性!");
+				request.setAttribute("jsonViewStr", getJsonView(result));
+				return mapping.findForward("servletResult");
+			}
+		}
+		try{
+			fileName=fileName.toLowerCase().endsWith(".csv")?fileName.substring(0,fileName.lastIndexOf("."))+".xls":fileName;
+			WritableWorkbook wwb=Workbook.createWorkbook(new File(SystemConfig.getSystemConfig().getFileRoot() + fileName));
+			
 			WritableSheet ws = wwb.createSheet("比对完成",1);
 			//**************往工作表中添加数据*****************
 			//1.添加Label对象
@@ -184,10 +233,13 @@ public class UserAction extends DispatchAction {
 //			ws.addCell(labelcf);
 			wwb.write();
 			wwb.close();
-			workbook.close();
 			result.setRetObj(SystemConfig.getSystemConfig().getFileSavePath()+"/upload/files/"+fileName);
 		} catch (Exception e) {
-			System.out.print(e.getMessage());
+			e.printStackTrace();
+			result.setRetCode(1);
+			result.setRetObj("对不起,在生成比较结果文件时,发生错误,请重新进行操作!");
+			request.setAttribute("jsonViewStr", getJsonView(result));
+			return mapping.findForward("servletResult");
 		}
 		request.setAttribute("jsonViewStr", getJsonView(result));
 		return mapping.findForward("servletResult");

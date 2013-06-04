@@ -44,7 +44,7 @@ $(document).ready(function(){
 <form id="fileDelForm" name="fileDelForm" action="" method="post">
 							<table class="Js_grayBg common_table file_table">
 								<tr>
-									<th><input type="checkbox" onclick="chooseAll(this)"/>全选</th><th>上传人</th><th>采集人</th><th>上传文件名</th><th>上传时间</th><th>采集时间</th><th style="display:none">重要性</th><th>备注</th><th>上传人IP</th><th>上传人部门</th>
+									<th><input type="checkbox" onclick="chooseAll(this)"/>全选</th><th>上传民警</th><th>处警民警</th><th>上传文件名</th><th>上传时间</th><th>采集时间</th><th style="display:none">重要性</th><th>备注</th><th>上传民警IP</th><th>上传民警部门</th>
 								</tr>
 								<%
 								UserForm userForm = null;

@@ -177,11 +177,11 @@ $(document).ready(function(){
 												%></span>
 											</li>
 											<li>
-												<span class="hd">录 制 人：</span>
+												<span class="hd">处警民警：</span>
 												<span class="bd"><%=uploadForm.getEditName() %></span>
 											</li>
 											<li>
-												<span class="hd">上 传 人：</span>
+												<span class="hd">上传民警：</span>
 												<span class="bd"><%=uploadForm.getUserName() %></span>
 											</li>
 										</ul>

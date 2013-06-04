@@ -68,14 +68,32 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 		{
 			UploadForm uploadForm = uploadFormList.get(i);
 			String fileType = "图片";
-			if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("mp4"))
-			{
-				fileType = "视频";
+			String viewJs="";
+			if(uploadForm.getPlayPath()!=null && uploadForm.getPlayPath().length()>4){
+				if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3).toLowerCase().equals("jpg")){
+					fileType="图片 ";
+					viewJs="<a href=\"javascript:imageDialogShow('"+uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath()+"','','查看图片');\" class='blue_mod_btn'>查看图片</a>";
+				}
+				if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("mp4"))
+				{
+					fileType = "视频";
+					if(uploadForm.getFileState().equals("A")) {
+						viewJs="<a href=\"javascript:playFlvDialogShow('"+uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getFlvPath()+"','','播放视频');\" class='blue_mod_btn'>播放视频</a>";
+					}else{
+						viewJs="<a href=\"javascript:alert('视频正在剪辑中，请稍后');\" class='blue_mod_btn'>剪辑中...</a>";
+					}
+				}
+				if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("wav"))
+				{
+					fileType = "音频";
+					if(uploadForm.getFileState().equals("A")) {
+						viewJs="<a href=\"javascript:playWavDialogShow('"+uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() +"','','播放音频');\" class='blue_mod_btn'>播放音频</a>";
+					}else{
+						viewJs="<a href=\"javascript:alert('视频正在剪辑中，请稍后');\" class='blue_mod_btn'>剪辑中...</a>";
+					}
+				}
 			}
-			if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("wav"))
-			{
-				fileType = "音频";
-			}
+			
 			String fileState = "有效";
 			if(uploadForm.getFileState().equals("U"))
 			{
@@ -97,6 +115,7 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 			<a href="javascript:void(0)" rel="facebox" onclick="showUploadDetail('<%=i %>')">详情</a>
 			<input type="hidden" id="img_<%=i %>" value="<%=uploadForm.getFileSavePath() %>/upload/files/<%=uploadForm.getShowPath()%>" />
 			<input type="hidden" id="type_<%=i %>" value="<%=fileType %>" />
+			<div id='viewJs_<%=i %>' style='display:none' ><%=viewJs %> </div>
 			<input type="hidden" id="name_<%=i %>" value="<%=uploadForm.getUploadName() %>" />
 			<input type="hidden" id="uploadTime_<%=i %>" value="<%=DateUtils.formatChar14Time(uploadForm.getUploadTime()==null?"":uploadForm.getUploadTime()) %>" />
 			<input type="hidden" id="user_<%=i %>" value="<%=uploadForm.getUserName() %>" />
@@ -162,12 +181,12 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 					<td id="uploadTime_"></td>
 				</tr>
 				<tr>
-					<td align="right">上传人</td>
+					<td align="right">上传民警</td>
 					<td>：</td>
 					<td id="user_"></td>
 				</tr>
 				<tr>
-					<td align="right">录制人</td>
+					<td align="right">处警民警</td>
 					<td>：</td>
 					<td id="edit_"></td>
 				</tr>
@@ -250,6 +269,50 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 <input type="hidden" name="stats" id="_stats_" />
 <!--input type="hidden" name="file_remark" value="这个文件很重要" id="_file_remark_" /-->
 </form>
+<div id="imgShowDiv" icon="icon-save" style="display:none" class="boxcontent">
+<img id="imgObj" src="" />
+</div>
+<div id="playShowDiv" icon="icon-save" style="display:none" class="boxcontent">
+<object id="video" name="video" width="640" height="480" border="0" classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA">
+<param name="ShowDisplay" value="0">
+<param name="ShowControls" value="1">
+<param name="AutoStart" value="1">
+<param name="AutoRewind" value="0">
+<param name="PlayCount" value="-1">
+<param name="Appearance" value="0" value="">
+<param name="BorderStyle" value="0" value="">
+<param name="MovieWindowHeight" value="570">
+<param name="MovieWindowWidth" value="440">
+<param name="FileName" value="" id="playObj">
+<embed id="videoObj" width="570" height="440" border="0" showdisplay="0" showcontrols="1" autostart="1" autorewind="0" playcount="-1" moviewindowheight="570" moviewindowwidth="440" filename="" src=""> 
+</embed>
+</object>
+</div>
+<div id="playFlvDiv" icon="icon-save" style="display:none" class="boxcontent">
+<object id="flv" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" height="640" width="480"> 
+<param name="movie" id="flvplayObj" value="vcastr22.swf?vcastr_file="> 
+<param name="quality" value="high"> 
+<param name="allowFullScreen" value="true" /> 
+<embed id="flvvideoObj" src="vcastr22.swf?vcastr_file=" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" 
+type="application/x-shockwave-flash" width="640" height="480"> 
+</embed> 
+</object>
+</div>
+<div id="playFlvFrame" icon="icon-save" style="display:none" class="boxcontent">
+<iframe src="" name="flvplay" frameborder="0" width="560" height="420" scrolling="no"></iframe>
+</div>
+<div id="playWavFrame" icon="icon-save" style="display:none" class="boxcontent">
+<iframe src="" name="wavplay" frameborder="0" width="420" height="100" scrolling="no"></iframe>
+</div>
+<form id="playFlvDivForm" action="videoPlayer/play.jsp" method="post" target="flvplay">
+<input type="hidden" id="flvPath" name="flvPath" />
+</form>
+<form id="playWavDivForm" action="wavplay.jsp" method="post" target="wavplay">
+<input type="hidden" id="wavPath" name="wavPath" /> 
+</form>
+<script type="text/javascript" src="<%=basePath %>js/jquery_dialog.js"></script>
+<script type="text/javascript" src="<%=basePath %>js/jquery.bgiframe.min.js"></script>
+<script type="text/javascript" src="<%=basePath %>pagejs/uploadManager.js"></script>
 <script>
 function uploadFileStats(statsVal)
 {
@@ -362,16 +425,16 @@ if(policeTime.length>0)
  * @param forIndex 循环下标
  */
 function showUploadDetail(forIndex, editAction) {
-jQuery(function($) {
+jQuery(function($) { 
 	$("#policeType").find("option[value='"+$('#policeType_'+forIndex).val()+"']").attr("selected",true);
 	$("#useTime_").html($("#useTime_"+forIndex).val());
 	if($("#useTime_").html()!="") {
 		$("#useTime_").html($("#useTime_").html()+" 分钟");
 	}
 	$("#img_").attr("src", $("#img_"+forIndex).val());
-	$("#type_").html($("#type_"+forIndex).val());
+	$("#type_").html($("#type_"+forIndex).val()+"    "+$("#viewJs_"+forIndex).html());
 	$("#name_").html($("#name_"+forIndex).val());
-	$("#uploadTime_").html($("#uploadTime_"+forIndex).val());
+	$("#uploadTime_").html($("#uploadTime_"+forIndex).val()); 
 	$("#user_").html($("#user_"+forIndex).val());
 	$("#edit_").html($("#edit_"+forIndex).val());
 	$("#createTime_").html($("#createTime_"+forIndex).val());
@@ -382,6 +445,8 @@ jQuery(function($) {
 	var policeTime = $("#police_time_"+forIndex).val();
 	if(policeTime.length==14) {
 		$("#_police_time_").val(policeTime.substring(0,4)+"年"+policeTime.substring(4,6)+"月"+policeTime.substring(6,8)+"日"+policeTime.substring(8,10)+"时"+policeTime.substring(10,12)+"分"+policeTime.substring(12,14)+"秒");
+	}else{ 
+		$("#_police_time_").val("");
 	}
 	$("#_police_code_").val($("#police_code_"+forIndex).val());
 	$("#_police_desc_").html($("#police_desc_"+forIndex).val());
@@ -389,6 +454,8 @@ jQuery(function($) {
 	if($("#stats_"+forIndex).val()=="重要★")
 	{
 		$("#stats_").html("<font color='red'>"+$("#stats_"+forIndex).val()+"</font>");
+	}else{
+		$("#stats_").html("");
 	}
 	$("#_fileId_").val($("#fileId_"+forIndex).val());
 	showObj("uploadDetail");

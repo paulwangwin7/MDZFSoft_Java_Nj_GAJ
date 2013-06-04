@@ -88,6 +88,8 @@ $.ajax({
 			{
 				//alert(res.retObj);
 				$('#msgDiv').html('<a href="'+res.retObj+'" target="_blank">下载</a>');
+			}else if(res.retCode==1){
+				$('#msgDiv').html(res.retObj);
 			}
 		}
 	},

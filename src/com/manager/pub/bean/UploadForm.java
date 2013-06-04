@@ -13,6 +13,9 @@ public class UploadForm {
 	private long editId;//制作文件人id
 	@Expose
 	private String editName;//制作文件人姓名
+	//EditBy 孙强伟 ，增加上传人所属部门
+	@Expose
+	private String treeEditName;//上传人所属部门
 	@Expose
 	private String uploadName;//上传文件名
 	@Expose
@@ -243,5 +246,12 @@ public class UploadForm {
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+	public String getTreeEditName() {
+		return treeEditName;
+	}
+
+	public void setTreeEditName(String treeEditName) {
+		this.treeEditName = treeEditName;
 	}
 }
