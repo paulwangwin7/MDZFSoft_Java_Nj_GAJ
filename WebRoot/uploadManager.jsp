@@ -276,13 +276,14 @@ $(document).ready(function(){
 												<span class="hd">处警民警：</span>
 												<span class="bd"><%=uploadForm.getEditName() %></span>
 											</li>
-											<li>
-												<span class="hd">所属部门：</span>
-												<span class="bd"><%=uploadForm.getTreeEditName() %></span>
-											</li>
+											
 											<li>
 												<span class="hd">上传民警：</span>
 												<span class="bd"><%=uploadForm.getUserName() %></span>
+											</li>
+											<li>
+												<span class="hd">所属部门：</span>
+												<span class="bd"><%=uploadForm.getTreeEditName() %></span>
 											</li>
 										</ul>
 									</div>
@@ -307,14 +308,14 @@ $(document).ready(function(){
 												if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).toLowerCase().equals(".jpg"))
 												{
 										%>
-										<a href="javascript:imageDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','查看图片');" class="blue_mod_btn fr">查看图片</a>
+										<a href="javascript:imageDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','查看图片');" style="width:30px" class="blue_mod_btn fr">查看</a>
 										<%
 												}
 												else if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).toLowerCase().equals(".wav"))
 												{
 													if(uploadForm.getFileState().equals("A")) {
 										%>
-										<a href="javascript:playWavDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','播放音频');" class="blue_mod_btn fr">播放音频</a>
+										<a href="javascript:playWavDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','播放音频');" style="width:30px" class="blue_mod_btn fr">播放</a>
 										<%
 													} else {
 										%>
@@ -326,7 +327,7 @@ $(document).ready(function(){
 												{
 													if(uploadForm.getFileState().equals("A")) {
 										%>
-										<a href="javascript:playFlvDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getFlvPath() %>','','播放视频');" class="blue_mod_btn fr">播放视频</a>
+										<a href="javascript:playFlvDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getFlvPath() %>','','播放视频');" style="width:30px" class="blue_mod_btn fr">播放</a>
 										<%
 													} else {
 										%>
@@ -336,6 +337,14 @@ $(document).ready(function(){
 												}
 											}
 										%>
+										<%
+										// 20130613 EditBy 孙强伟
+											if(uploadForm.getPoliceCode()!=null && uploadForm.getPoliceCode().length()!=0){
+										%>
+										<a href="javascript:jjxxDetailShow('<%=uploadForm.getPoliceCode() %>')" class="blue_mod_btn fr">警综信息</a>
+										<%	
+											}
+										 %>
 									</div>
 								</li>
 							<%

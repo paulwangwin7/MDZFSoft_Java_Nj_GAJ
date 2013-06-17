@@ -98,3 +98,9 @@ function detailShow(uploadId)
 	//window.showModalDialog(contextPath()+"/userAction.do?method=fileDetailShow&uploadId="+uploadId+"&timer="+Math.random(),"","dialogwidth:600px;dialogheight:380px; toolbar=no,top=200,left=200, menubar=no, location=no, status=no");
 	window.open(contextPath()+"/userAction.do?method=fileDetailShow&uploadId="+uploadId+"&timer="+Math.random(), 'newwindow', 'height=380, width=600, top=100, left=300, toolbar=no, menubar=no, scrollbars=yes,resizable=no,location=no, status=no');
 }
+
+//20130613 EditBy 孙强伟
+function jjxxDetailShow(jjbh)
+{
+	window.open(contextPath()+"/userAction.do?method=jjxxDetailShow&jjbh="+jjbh+"&timer="+Math.random(), 'newwindow', 'height=380, width=600, top=100, left=300, toolbar=no, menubar=no, scrollbars=yes,resizable=no,location=no, status=no');
+}

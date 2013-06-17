@@ -1021,7 +1021,31 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 		Session session = getSession();
 		try {
 			session.clear();
-			String queryString = "from FrameUpload as model where (model.tree2Id = "+treeId+" or model.tree1Id = "+treeId+")";
+			
+			//EditBy 孙强伟  at 2013.06.06 ,根据需求,在进行父部门对比时同时会对子部门进行对比。
+			List<Long> treeIds=new ArrayList<Long>();
+			treeIds.add(treeId);
+			String queryString="from FrameTree as tree where tree.treeState ='A' order by tree.parentTreeId asc";
+			Query queryObject=session.createQuery(queryString);
+			List querylist = queryObject.list();
+			if(querylist!=null && querylist.size()>0) {
+				for(Object obj: querylist) {
+					FrameTree frameTree = (FrameTree)obj;
+					if(treeIds.contains(frameTree.getParentTreeId())){
+						 treeIds.add(frameTree.getTreeId());
+					}
+				}
+			}
+			
+			StringBuilder sb=new StringBuilder();
+			for(Long treeid : treeIds){
+				sb.append(treeid).append(",");
+			}
+			if(sb.length()>0)
+				sb.deleteCharAt(sb.length()-1);
+			
+//			queryString = "from FrameUpload as model where (model.tree2Id = "+treeId+" or model.tree1Id = "+treeId+")";
+			queryString = "from FrameUpload as model where (model.tree2Id in ("+sb.toString()+") or model.tree1Id in("+sb.toString()+"))";
 			if(!uploadTimeBegin.equals("") && !uploadTimeEnd.equals("")) {
 				queryString += " and substr(model.uploadTime,0,8) >= ? and substr(model.uploadTime,0,8) <= ?";
 			}
@@ -1029,7 +1053,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 				queryString += " and substr(model.policeTime,0,8) >= ? and substr(model.policeTime,0,8) <= ?";
 			}
 			queryString += " and model.policeType = ?";
-			Query queryObject = session.createQuery(queryString);
+			queryObject = session.createQuery(queryString);
 			int paramIndex = 0;
 			if(!uploadTimeBegin.equals("") && !uploadTimeEnd.equals("")) {
 				queryObject.setParameter(paramIndex, uploadTimeBegin);paramIndex++;
@@ -1040,7 +1064,7 @@ public class FrameUploadDAO extends BaseHibernateDAO {
 				queryObject.setParameter(paramIndex, policeTimeEnd);paramIndex++;
 			}
 			queryObject.setParameter(paramIndex, policeType);
-			List querylist = queryObject.list();
+			querylist = queryObject.list();
 			if(querylist!=null && querylist.size()>0) {
 				results = new ArrayList<UploadForm>();
 				for(Object obj: querylist) {

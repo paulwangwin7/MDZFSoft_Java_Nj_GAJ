@@ -12,8 +12,8 @@
 		<property name="url"
 			value="jdbc:oracle:thin:@127.0.0.1:1521:orcl">
 		</property>
-		<property name="username" value="GONGAN"></property>
-		<property name="password" value="GONGAN"></property>
+		<property name="username" value="zfms"></property>
+		<property name="password" value="zfms"></property>
 	</bean>
 	
 	<!-- DAO -->
@@ -65,6 +65,13 @@
 		<property name="frameMenuDAO" ref="frameMenuDAO"/>
 	</bean>
 
+<!-- EditBy 孙强伟  at 2013.06.09  -->
+	<bean id="jjxxBO" class="com.njmd.bo.impl.JjxxBOImpl">
+		<property name="url" value="http://10.33.250.137:8090/JJXXWS/services/Query?wsdl" />
+		<property name="namespaceURI" value="http://ws.jjxx.ldcj.btdx.com" />
+		<property name="localPort" value="Query" />
+	</bean>
+
 	<!-- Controller -->
     <bean name="/servletAction"
 		class="com.manager.servlet.ServletAction">
@@ -98,6 +105,7 @@
 		<property name="frameUploadBO" ref="frameUploadBO" />
 		<property name="frameNoticeBO" ref="frameNoticeBO" />
 		<property name="frameMenuBO" ref="frameMenuBO" />
+		<property name="jjxxBO" ref="jjxxBO"></property>
 	</bean>
 
 	<bean name="/clientAction"

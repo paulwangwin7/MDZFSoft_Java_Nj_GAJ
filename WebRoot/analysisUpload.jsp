@@ -48,13 +48,14 @@ var nowMonth = "<%=DateUtils.getChar8().substring(4,6)%>";
 							</li>
 							<li class="tab_item" onclick="showFrame('3')">警员统计</li>
 <%
-	if(userForm!=null && userForm.getUserId() == 0) {
+//EditBy 孙强伟 at 20130605   修改需求为：将下面的权限开放给所有人(20130604)。
+//	if(userForm!=null && userForm.getUserId() == 0) {
 %>
 							<li class="tab_item" onclick="showFrame('4')">视频分类</li>
 							<li class="tab_item" onclick="showFrame('5')">规范化考评</li>
-							<li class="tab_item" onclick="showFrame('6')">接处警比对</li>
+							<li class="tab_item" onclick="showFrame('6')" style='width:100px'>接处警数据比对</li>
 <%
-	}
+//	}
 %>
 						</ul>
 						<ul class="tab_conlist">
@@ -182,7 +183,8 @@ jQuery(function($) {
 							</div>
 							</li>
 <%
-	if(userForm!=null && userForm.getUserId() == 0) {
+//EditBy 孙强伟 at 20130605   修改需求为：将下面的权限开放给所有人(20130604)。
+//	if(userForm!=null && userForm.getUserId() == 0) {
 %>
 							<li class="tab_conitem">
 							<div class="gray_bor_bg">
@@ -434,7 +436,7 @@ jQuery(function($) {
 </script>
 							</li>
 <%
-	}
+//	}
 %>
 						</ul>
 <script>

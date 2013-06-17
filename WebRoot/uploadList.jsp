@@ -130,7 +130,7 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 			<input type="hidden" id="take_time_<%=i %>" value="<%=uploadForm.getTakeTime()==null?"":uploadForm.getTakeTime() %>" />
 			<input type="hidden" id="police_time_<%=i %>" value="<%=uploadForm.getPoliceTime()==null?"":uploadForm.getPoliceTime() %>" />
 			<input type="hidden" id="useTime_<%=i %>" value="<%=uploadForm.getUseTime()==null?"":uploadForm.getUseTime() %>" />
-			<input type="hidden" id="policeType_<%=i %>" value="<%=uploadForm.getPoliceType()==null?"":uploadForm.getPoliceType() %>" />
+			<input type="hidden" id="policeType_<%=i %>" value="<%=uploadForm.getPoliceType()==null?"1":uploadForm.getPoliceType() %>" />
 		</div>
 	</li>
 	<%
@@ -235,7 +235,7 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 </tr>
 <tr id="hid_1">
 <td>接警编号：</td>
-<td><input name="_police_code_" id="_police_code_" style="width:170px" maxlength="30" /></td>
+<td><input name="_police_code_" id="_police_code_" style="width:170px" maxlength="30" />&nbsp;
 </tr>
 <tr id="hid_2">
 <td>接警时间：</td>
@@ -250,7 +250,10 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 <td><textarea name="_police_desc_" id="_police_desc_" style="width:200px;height:50px" /></textarea></td>
 <tr>
 <tr>
-<td colspan="2"><button type="button" class="blue_mod_btn" onclick="uploadFileRemark()">设 置</button></td>
+<td colspan="2"><!-- 20130613 EditBy 孙强伟 -->
+<button type="button" class="blue_mod_btn jjxx" onclick="jjxxDetails()">接处警信息</button>
+&nbsp;<button type="button" class="blue_mod_btn jjxx" onclick="jjxxSynchronize()">同  步</button>
+&nbsp;<button type="button" class="blue_mod_btn" onclick="uploadFileRemark()">保  存</button></td>
 </tr>
 </table>
 </td>
@@ -314,6 +317,16 @@ type="application/x-shockwave-flash" width="640" height="480">
 <script type="text/javascript" src="<%=basePath %>js/jquery.bgiframe.min.js"></script>
 <script type="text/javascript" src="<%=basePath %>pagejs/uploadManager.js"></script>
 <script>
+String.prototype.startWith=function(str){
+	if(str==null||str==""||this.length==0||str.length>this.length)
+		return false;
+	if(this.substr(0,str.length)==str)
+		return true;
+	else
+		return false;
+	return true;
+}
+
 function uploadFileStats(statsVal)
 {
 jQuery(function($) {
@@ -372,6 +385,21 @@ if(policeTime.length>0)
 			alert('接警编号必须填写');
 			return;
 		}
+		$("#_police_code_").val($.trim($("#_police_code_").val()));
+		if($("#_police_code_").val().length<20){
+			alert("接警编号的长度不够,其长度必须为20位!")
+			return ;
+		}
+		
+		if($("#_police_code_").val().length>20){
+			alert("接警编号的长度超过20位，其长度必须为20位!");
+			return ;
+		}
+		
+		if(!($("#_police_code_").val().startWith("J") || $("#_police_code_").val().startWith("j"))){
+			alert("接警编号必须以J或者j开头!");
+			return ;
+		}
 		if($('#_police_time_').val().length=='')
 		{
 			alert('接警时间必须选择');
@@ -426,7 +454,7 @@ if(policeTime.length>0)
  */
 function showUploadDetail(forIndex, editAction) {
 jQuery(function($) { 
-	$("#policeType").find("option[value='"+$('#policeType_'+forIndex).val()+"']").attr("selected",true);
+	$("#policeType").find("option[value='"+$('#policeType_'+forIndex).val()+"']").attr("selected",true).change();
 	$("#useTime_").html($("#useTime_"+forIndex).val());
 	if($("#useTime_").html()!="") {
 		$("#useTime_").html($("#useTime_").html()+" 分钟");
@@ -440,7 +468,7 @@ jQuery(function($) {
 	$("#createTime_").html($("#createTime_"+forIndex).val());
 	$("#_take_time_").val($("#take_time_"+forIndex).val());
 	$("#state_").html($("#state_"+forIndex).val());
-	$("#stats_").html($("#stats_"+forIndex).val());
+	$("#stats_").html($("#stats_"+forIndex).val()); 
 	$("#_file_remark_").val($("#_file_remark_"+forIndex).val());
 	var policeTime = $("#police_time_"+forIndex).val();
 	if(policeTime.length==14) {
@@ -460,7 +488,7 @@ jQuery(function($) {
 	$("#_fileId_").val($("#fileId_"+forIndex).val());
 	showObj("uploadDetail");
 });
-policeTypeChange();
+
 }
 
 function isObjNull(obj,objName){
@@ -488,11 +516,26 @@ function mineUpload_(pagecute){
 function policeTypeChange() {
 jQuery(function($) {
 	var policeTypeVal = $('#policeType').val();
+	
+	var options=$('#policeType').children("option[selected]");
+	if(undefined!=options[0]){
+		var text=$(options[0]).html();
+		if(text.indexOf("110")!=-1){
+			$('.jjxx').show();
+		}else
+			$('.jjxx').hide();
+	}
+	
 	$('#hid_1').css('display','none');//接警编号
 	$('#hid_2').css('display','none');//接警时间
 	$('#hid_3').css('display','none');//文件备注
 	$('#hid_4').css('display','none');//简要警情
 	//$('#hid_5').css('display','block'); ??嫌疑人??
+	
+	$("#_police_code_").val("");
+	$("#_police_time_").val("");
+	$("#_file_remark_").val("");
+	$("#_police_desc_").val("");
 	switch(parseInt(policeTypeVal)) {
 		case 1 : {
 			$('#hid_1').css('display','block');
@@ -509,4 +552,90 @@ jQuery(function($) {
 	}
 });
 }
+
+// 20130613 EditBy 孙强伟
+function jjxxDetails(){
+jQuery(function($){
+	var jjbh=$.trim($("#_police_code_").val());
+	var options=$('#policeType').children("option[selected]");
+	if(undefined!=options[0]){
+		var text=$(options[0]).html();
+		if(text.indexOf("110")!=-1){
+		}else{
+			reutrn ;
+		}
+	}
+	window.open(contextPath()+"/userAction.do?method=jjxxDetailShow&jjbh="+jjbh+"&timer="+Math.random(), 'newwindow', 'height=380, width=600, top=100, left=300, toolbar=no, menubar=no, scrollbars=yes,resizable=no,location=no, status=no');
+});
+}
+
+// 20130613 EditBy 孙强伟
+function jjxxSynchronize()
+{
+jQuery(function($) {
+	var options=$('#policeType').children("option[selected]");
+	if(undefined!=options[0]){
+		var text=$(options[0]).html();
+		if(text.indexOf("110")!=-1){
+		}else{
+			reutrn ;
+		}
+	}
+	
+	if($('#_police_code_').val().length==''){
+		alert('接警编号必须填写');
+		return;
+	}
+	$("#_police_code_").val($.trim($("#_police_code_").val()));
+	if($("#_police_code_").val().length<20){
+		alert("接警编号的长度不够,其长度必须为20位!")
+		return ;
+	}
+	
+	if($("#_police_code_").val().length>20){
+		alert("接警编号的长度超过20位，其长度必须为20位!");
+		return ;
+	}
+	
+	if(!($("#_police_code_").val().startWith("J") || $("#_police_code_").val().startWith("j"))){
+		alert("接警编号必须以J或者j开头!");
+		return ;
+	}
+	
+	var jjbh=$("#_police_code_").val();
+	
+	$.ajax({
+		url:contextPath()+'userAction.do?method=jjxxDetail',
+		type: 'post',
+		dataType: 'json',
+		cache: false,
+		async: false,
+		data: {"jjbh":jjbh},
+		success:function(res){
+			if(res != null)
+			{
+				if(!res.status)
+				{
+					alert(res.failmessage);
+				}
+				else if(!res.exist)
+				{
+					alert(res.notexistmessage);
+				}else{
+					var policeTime=res.results.JJSJ;
+					$("#_police_time_").val(policeTime.substring(0,4)+"年"+policeTime.substring(4,6)+"月"+policeTime.substring(6,8)+"日"+policeTime.substring(8,10)+"时"+policeTime.substring(10,12)+"分"+policeTime.substring(12,14)+"秒");
+					$("#_police_desc_").val(res.results.CLJGNR);
+				}
+			}
+			else{
+				showMsg("请求失败，返回结果null", 1);
+			}
+		},
+		error:function(){
+			showMsg("请求失败 error function", 1);
+		}
+	});
+});
+}
+
 </script>

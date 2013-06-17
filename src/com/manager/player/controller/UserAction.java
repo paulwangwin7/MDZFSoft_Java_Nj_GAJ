@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import org.skife.csv.SimpleReader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.manager.admin.dao.AdminDAO;
 import com.manager.admin.dao.LogDAO;
 import com.manager.admin.dao.SysDAO;
@@ -57,6 +60,7 @@ import com.njmd.bo.FrameRoleBO;
 import com.njmd.bo.FrameTreeBO;
 import com.njmd.bo.FrameUploadBO;
 import com.njmd.bo.FrameUserBO;
+import com.njmd.bo.JjxxBO;
 
 
 public class UserAction extends DispatchAction {
@@ -80,6 +84,8 @@ public class UserAction extends DispatchAction {
 	private FrameUploadBO frameUploadBO;
 	private FrameNoticeBO frameNoticeBO;
 	private FrameMenuBO frameMenuBO;
+	
+	private JjxxBO jjxxBO;
 
 	public String getJsonView(Object javaObj) {
 		GsonBuilder builder = new GsonBuilder();
@@ -1590,6 +1596,86 @@ public class UserAction extends DispatchAction {
 		   }
 		   return mapping.findForward("user_noticeDetail");
 	   }
+	   
+	/**
+	 * 20130613 EditBy 孙强伟 
+	 * 我的上传中，同步按键的功能
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ActionForward jjxxDetail(ActionMapping mapping, ActionForm form,
+				HttpServletRequest request, HttpServletResponse response) {
+		UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
+		String jjbh = request.getParameter("jjbh")==null?"":request.getParameter("jjbh");
+		if(userForm!=null && jjbh!=null && (!"".equals(jjbh))){
+			userLog(request, "接警信息查询:"+jjbh);
+			Map<String,Object> results=jjxxBO.fetchJjxx(jjbh);
+			
+			Gson gson = new Gson();
+	        response.setContentType("application/json;charset=UTF-8");  
+	        response.setCharacterEncoding("UTF-8");  
+	        try {
+				PrintWriter pw = response.getWriter();  
+				pw.write(gson.toJson(results));  
+				pw.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
+		}
+		return null;
+	}
+	
+	/**
+	 * 20130613 EditBy 孙强伟
+	 * 查看警综平台的接警信息
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ActionForward jjxxDetailShow(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
+		boolean showSuccess = true;
+//		switch(userAction(request, "8"))// 0-正常运行操作 1-用户登录已超时 2-用户不在此权限范围
+//		{
+//			case 0: showSuccess = true;break;
+//			case 1 : informationFrameForm = new InformationFrameForm("尊敬的用户，您登录已超时，请刷新后重新登录~","","1","wjck","文件查看");break;
+//			case 2 : informationFrameForm = new InformationFrameForm("尊敬的用户，您不具备此权限范围~","","1","wjck","文件查看");break;
+//			default : informationFrameForm = new InformationFrameForm("添加失败 系统超时~","","1","wjck","文件查看");
+//		}
+		if(showSuccess)
+		{
+			UserForm userForm = (UserForm)request.getSession().getAttribute(Constants.SESSION_USER_FORM);
+			String jjbh = request.getParameter("jjbh")==null?"":request.getParameter("jjbh");
+			if(userForm!=null && jjbh!=null && (!"".equals(jjbh))){
+				userLog(request, "接警信息查询:"+jjbh);
+				Map<String,Object> results=jjxxBO.fetchJjxx(jjbh);
+				
+				if(!((Boolean)results.get("status"))){
+					request.setAttribute(Constants.JSP_MESSAGE, new InformationFrameForm( (String)results.get("failmessage"),"","1","jjxx","接警信息"));
+					return mapping.findForward(frame_information);
+				}
+				
+				if(!((Boolean)results.get("exist"))){
+					request.setAttribute(Constants.JSP_MESSAGE, new InformationFrameForm( (String)results.get("notexistmessage"),"","1","jjxx","接警信息"));
+					return mapping.findForward(frame_information);
+				}
+				
+				request.setAttribute("jjxxDetail", results);
+				return mapping.findForward("jjxxDetail");
+			}else{
+				request.setAttribute(Constants.JSP_MESSAGE, new InformationFrameForm("未发现接警编号，请重新操作~","","1","jjxx","接警信息"));
+				return mapping.findForward(frame_information);
+			}
+		}
+		request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+		return mapping.findForward(frame_information);
+	}
+	   
 	public void setLogDAO(LogDAO logDAO) {
 		this.logDAO = logDAO;
 	}
@@ -1616,6 +1702,9 @@ public class UserAction extends DispatchAction {
 	}
 	public void setFrameMenuBO(FrameMenuBO frameMenuBO) {
 		this.frameMenuBO = frameMenuBO;
+	}
+	public void setJjxxBO(JjxxBO jjxxBO) {
+		this.jjxxBO = jjxxBO;
 	}
 
 	public String treeNameByTreeIds(String treeIds) {
