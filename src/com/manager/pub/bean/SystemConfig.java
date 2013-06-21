@@ -16,6 +16,9 @@ public class SystemConfig {
 	private String loginIPFilter;//是否要进行ip验证，Y-是 其他否
 	private List<String> loginIPList;//可以登录的ip
 
+	private String serverPath;	//web服务哭喊目录
+
+
 	private String fileRoot;	//资源文件存放根目录
 	private String ffmpegPath;	//截图工具路径
 	private String formatFactoryPath;//格式工厂路径
@@ -258,5 +261,11 @@ public class SystemConfig {
 		this.fileSystemDel = fileSystemDel;
 	}
 
+	public void setServerPath(String serverPath) {
+		this.serverPath = serverPath;
+	}
+	public String getServerPath() {
+		return serverPath;
+	}
 	
 }

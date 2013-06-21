@@ -74,6 +74,9 @@ var ftpPswd = ""
 									</div>
 								</div>
 							</li>
+							<%
+							//EditBy 孙强伟 at 20130620
+							// if(uf!=null && uf.getUserId() == 0) { %>
 							<li class="my_upitem clearfix" id="uploadType2">
 								<div class="up_help_img ">
 									<img src="images/up_step2.png" alt="" /><a href="javascript:uploadTypeDiv2()">选择进入&gt;&gt;</a>
@@ -114,6 +117,7 @@ var ftpPswd = ""
 									</div>
 								</div>
 							</li>
+							<% // } %>
 						</ul>
 						</TD>
 						<TD>

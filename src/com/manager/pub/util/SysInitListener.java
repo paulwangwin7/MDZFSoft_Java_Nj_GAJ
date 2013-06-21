@@ -59,6 +59,7 @@ public class SysInitListener implements ServletContextListener {
 			sysConfig.setSysLoginName(pu.getValue("sysLoginName"));
 			sysConfig.setSysLoginPswd(pu.getValue("sysLoginPswd"));
 			sysConfig.setMinfreeSpace(pu.getValue("minfreeSpace"));
+			sysConfig.setServerPath(pu.getValue("serverPath"));
 			sysConfig.setSystemConfig(sysConfig);
 		}
 		catch(Exception ex)

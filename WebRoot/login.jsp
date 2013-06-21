@@ -41,7 +41,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<img id="checkImg" src="checkCode.jsp" class="validate_img" /><a href="javascript:changeCheckImg()">重获验证码</a>
 				<p class="pl_50 mt_10">
 					<input type="submit" class="login_btn" value="" />
-					<IMG style="CURSOR: pointer" onclick="toUkeyLogin('<%=SystemConfig.getSystemConfig().getFileSavePath() %>')" height=36  src="images/button1.gif" width=128>
+					<IMG style="CURSOR: pointer" onclick="toUkeyLogin('<%=SystemConfig.getSystemConfig().getServerPath() %>')" height=36  src="images/button1.gif" width=128>
 				</p>
 			</li>
 		</ul>

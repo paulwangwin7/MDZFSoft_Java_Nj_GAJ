@@ -171,7 +171,8 @@ public class UserAction extends DispatchAction {
 				
 				for(int i=1;i<items.size();i++){
 					String[] item=(String[])items.get(i);
-					if(item.length>0)
+					// 20130620 EditBy 孙强伟 ，修改由于csv文件中存在"\tab"而引起的换行问题。
+					if(item.length>0 && item[0].toLowerCase().startsWith("j") && item[0].length()==20)
 						policeCode.add(item[0]);
 				}
 			} catch (Exception e) {
@@ -199,7 +200,8 @@ public class UserAction extends DispatchAction {
 					for (int i = 0; i < colnum; i++) {// i为列
 						Cell cell = sheet.getCell(i, j);
 						String cellContent = cell.getContents();//获取内容
-						policeCode.add(cellContent);
+						if(null!=cellContent && cellContent.toLowerCase().startsWith("j") && cellContent.length()==20)
+							policeCode.add(cellContent);
 					}
 				}
 				workbook.close();
@@ -239,7 +241,10 @@ public class UserAction extends DispatchAction {
 //			ws.addCell(labelcf);
 			wwb.write();
 			wwb.close();
-			result.setRetObj(SystemConfig.getSystemConfig().getFileSavePath()+"/upload/files/"+fileName);
+			// 20130620 Editby 孙强伟
+//			result.setRetObj(SystemConfig.getSystemConfig().getFileSavePath()+"/upload/files/"+fileName);
+			result.setRetObj(SystemConfig.getSystemConfig().getFileSavePath()+fileName);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setRetCode(1);

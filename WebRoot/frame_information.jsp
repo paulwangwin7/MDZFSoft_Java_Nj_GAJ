@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="GB2312"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="com.manager.pub.bean.*,com.manager.pub.util.*" %>
 <%
 	String returnCode = "";

@@ -7,9 +7,11 @@ String playVodPath = "";
 if(request.getAttribute("fileDetail")!=null)
 {
 	uploadForm = (UploadForm)request.getAttribute("fileDetail");
-	fileImgPath = uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getShowPath();
+//	fileImgPath = uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getShowPath();
+	fileImgPath = uploadForm.getFileSavePath()+uploadForm.getShowPath();
 	System.out.println(fileImgPath);
-	playVodPath = uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath();
+//	playVodPath = uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath();
+	playVodPath = uploadForm.getFileSavePath()+uploadForm.getPlayPath();
 	if(uploadForm.getPlayPath()!=null && uploadForm.getPlayPath().length()>0 && uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).equals(".avi"))
 	{
 %>

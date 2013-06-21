@@ -89,8 +89,8 @@ $(document).ready(function(){
 												if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).toLowerCase().equals(".jpg"))
 												{
 										%>
-										<a href="javascript:imageDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','查看图片');" >
-										<img src="<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getShowPath() %>" alt="" width="160px" height="160px" />
+										<a href="javascript:imageDialogShow('<%=uploadForm.getFileSavePath()+uploadForm.getPlayPath() %>','','查看图片');" >
+										<img src="<%=uploadForm.getFileSavePath()+uploadForm.getShowPath() %>" alt="" width="160px" height="160px" />
 										</a>
 										<%
 												}
@@ -98,11 +98,11 @@ $(document).ready(function(){
 												{
 													if(uploadForm.getFileState().equals("A")) {
 										%>
-										<a href="javascript:playWavDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','播放音频');" >
+										<a href="javascript:playWavDialogShow('<%=uploadForm.getFileSavePath()+uploadForm.getPlayPath() %>','','播放音频');" >
 										<%
 													}
 										%>
-										<img title="<%=uploadForm.getFileRemark()==null?"":uploadForm.getFileRemark() %>" src="<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getShowPath() %>" alt="" width="160px" height="160px" />
+										<img title="<%=uploadForm.getFileRemark()==null?"":uploadForm.getFileRemark() %>" src="<%=uploadForm.getFileSavePath()+uploadForm.getShowPath() %>" alt="" width="160px" height="160px" />
 										<%
 													if(uploadForm.getFileState().equals("A")) {
 										%>
@@ -114,11 +114,11 @@ $(document).ready(function(){
 												{
 													if(uploadForm.getFileState().equals("A")) {
 										%>
-										<a href="javascript:playFlvDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getFlvPath() %>','','播放视频');" >
+										<a href="javascript:playFlvDialogShow('<%=uploadForm.getFileSavePath()+uploadForm.getFlvPath() %>','','播放视频');" >
 										<%
 													}
 										%>
-										<img title="<%=uploadForm.getFileRemark()==null?"":uploadForm.getFileRemark() %>" src="<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getShowPath() %>" alt="" width="160px" height="160px" />
+										<img title="<%=uploadForm.getFileRemark()==null?"":uploadForm.getFileRemark() %>" src="<%=uploadForm.getFileSavePath()+uploadForm.getShowPath() %>" alt="" width="160px" height="160px" />
 										<%
 													if(uploadForm.getFileState().equals("A")) {
 										%>
@@ -198,7 +198,7 @@ $(document).ready(function(){
 										<%
 											if(canDown(request.getSession().getAttribute(Constants.SESSION_ROLE_FORM))) {
 										%>
-										<a href="<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>" target="_blank" class="blue_mod_btn fr" style="width:30px">下载</a>
+										<a href="<%=uploadForm.getFileSavePath()+uploadForm.getPlayPath() %>" target="_blank" class="blue_mod_btn fr" style="width:30px">下载</a>
 										<%
 											}
 										%>
@@ -207,14 +207,14 @@ $(document).ready(function(){
 												if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).toLowerCase().equals(".jpg"))
 												{
 										%>
-										<a href="javascript:imageDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','查看图片');" class="blue_mod_btn fr">查看图片</a>
+										<a href="javascript:imageDialogShow('<%=uploadForm.getFileSavePath()+uploadForm.getPlayPath() %>','','查看图片');" class="blue_mod_btn fr">查看图片</a>
 										<%
 												}
 												else if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-4).toLowerCase().equals(".wav"))
 												{
 													if(uploadForm.getFileState().equals("A")) {
 										%>
-										<a href="javascript:playWavDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() %>','','播放音频');" class="blue_mod_btn fr">播放音频</a>
+										<a href="javascript:playWavDialogShow('<%=uploadForm.getFileSavePath()+uploadForm.getPlayPath() %>','','播放音频');" class="blue_mod_btn fr">播放音频</a>
 										<%
 													} else {
 										%>
@@ -226,7 +226,7 @@ $(document).ready(function(){
 												{
 													if(uploadForm.getFileState().equals("A")) {
 										%>
-										<a href="javascript:playFlvDialogShow('<%=uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getFlvPath() %>','','播放视频');" class="blue_mod_btn fr">播放视频</a>
+										<a href="javascript:playFlvDialogShow('<%=uploadForm.getFileSavePath()+uploadForm.getFlvPath() %>','','播放视频');" class="blue_mod_btn fr">播放视频</a>
 										<%
 													} else {
 										%>

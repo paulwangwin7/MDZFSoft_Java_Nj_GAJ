@@ -1,7 +1,9 @@
 package com.manager.player.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +35,8 @@ import com.manager.pub.util.tt;
 
 
 public class InterfaceAction extends DispatchAction {
+	private static String APPCODE="njmd84588111"; 
+
 	private UserDAO userDAO;
 	private LogDAO logDAO;
 	private SysDAO sysDAO;
@@ -53,27 +57,39 @@ public class InterfaceAction extends DispatchAction {
 
 	public ActionForward getFtpPath(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) {
-		File file = null;
-		String uploadUserCode = request.getParameter("userCode");
-		System.out.println(uploadUserCode);
-		if(uploadUserCode!=null) {
-			UserForm uploadUser = userDAO.clientLogin(uploadUserCode);
-			if(uploadUser==null) {
-				informationFrameForm = new InformationFrameForm("获取FTP保存路径失败~ 该警员编号不存在","","1","tab_wjsc","文件上传");
-			} else {
-				file = new File(SystemConfig.getSystemConfig().getFileRoot()+uploadUser.getTreeId()+"/"+uploadUser.getUserId());
-				if(file.exists()) {
-					informationFrameForm = new InformationFrameForm("/"+uploadUser.getTreeId()+"/"+uploadUser.getUserId()+"/;0","","0","tab_wjsc","文件上传");
-				} else {
-					informationFrameForm = new InformationFrameForm("/"+uploadUser.getTreeId()+"/"+uploadUser.getUserId()+"/;1","","0","tab_wjsc","文件上传");
-				}
-				
-			}
-		} else {
-			informationFrameForm = new InformationFrameForm("获取FTP保存路径失败~ 请求参数不正确","","1","tab_wjsc","文件上传");
+		String appCode=request.getParameter("appCode");
+		if(null==appCode || appCode.trim().length()==0 || !appCode.trim().toLowerCase().equals(APPCODE)){
+			informationFrameForm = new InformationFrameForm("终端使用的连接Key错误，请重新设置!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
 		}
+		
+		String userCode = request.getParameter("userCode");
+		String editCode=request.getParameter("editCode");
+		if(null==userCode || userCode.trim().length()==0 ||null==editCode || editCode.trim().length()==0){
+			informationFrameForm = new InformationFrameForm("您请求的参数中没有包含采集人或者工作站的编号，请检查!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+			
+		UserForm uploadUser=userDAO.clientLogin(userCode);
+		UserForm editUser=userDAO.clientLogin(editCode);
+		if(null==uploadUser){
+			informationFrameForm = new InformationFrameForm("您请求的参数中，工作站编号不存在，请检查!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+		
+		if(null==editUser){
+			informationFrameForm = new InformationFrameForm("您请求的参数中，采集人编号不存在，请检查!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+		
+		SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");
+		informationFrameForm = new InformationFrameForm(uploadUser.getTreeId()+"/"+uploadUser.getUserId()+"/"+dateformat.format(new Date())+"/","","0","tab_wjsc","文件上传");
 		request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
-		return mapping.findForward(frame_information);
+		return mapping.findForward(frame_information);	
 	}
 
 
@@ -87,84 +103,107 @@ public class InterfaceAction extends DispatchAction {
 	 */
 	public ActionForward uploadFile(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) {
-		boolean uploadSuccess = true;
+		String appCode=request.getParameter("appCode");
+		if(null==appCode || appCode.trim().length()==0 || !appCode.trim().toLowerCase().equals(APPCODE)){
+			informationFrameForm = new InformationFrameForm("终端使用的连接Key错误，请重新设置!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+		
+		String userCode = request.getParameter("userCode");
+		String editCode=request.getParameter("editCode");
+		if(null==userCode || userCode.trim().length()==0 ||null==editCode || editCode.trim().length()==0){
+			informationFrameForm = new InformationFrameForm("您请求的参数中没有包含采集人或者工作站的编号，请检查!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+			
+		UserForm uploadUser=userDAO.clientLogin(userCode);
+		UserForm editUser=userDAO.clientLogin(editCode);
+		if(null==uploadUser){
+			informationFrameForm = new InformationFrameForm("您请求的参数中，工作站编号不存在，请检查!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+		
+		if(null==editUser){
+			informationFrameForm = new InformationFrameForm("您请求的参数中，采集人编号不存在，请检查!","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
+		}
+		
 		//检查采集人、上传人警员编号是否存在
-		String editCode = request.getParameter("editCode");
-		String uploadUserCode = request.getParameter("userCode");
 		String filePath = request.getParameter("filePath");
 		String fileName = request.getParameter("uploadName");
 		String createTime = request.getParameter("createTime");
 		String fileSize = request.getParameter("fileSize");
-		if(editCode==null || uploadUserCode==null || filePath==null || fileName==null || createTime==null) {
-			uploadSuccess = false;
+		String fileTime=request.getParameter("fileTime");
+		if(filePath==null || fileName==null || createTime==null) {
 			informationFrameForm = new InformationFrameForm("上传失败 参数不全或格式错误~","","1","tab_wjsc","文件上传");
+			request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
+			return mapping.findForward(frame_information);
 		}
-		if(uploadSuccess)
+		
+		uploadForm = new UploadForm();
+		uploadForm.setUserId(uploadUser.getUserId());
+		uploadForm.setEditId(editUser.getUserId());
+		uploadForm.setUploadName(fileName);
+		uploadForm.setPlayPath(filePath.replace(",", "/"));
+		uploadForm.setShowPath(uploadForm.getPlayPath());
+		uploadForm.setFileRemark("");
+		uploadForm.setIpAddr(request.getRemoteAddr());
+		uploadForm.setFileSavePath(SystemConfig.getSystemConfig().getFileSavePath());
+		uploadForm.setFileState("A");
+			
+		if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".jpg")>0)
 		{
-			UserForm editForm = userDAO.clientLogin(editCode);
-			UserForm uploadUser = userDAO.clientLogin(uploadUserCode);
-			
-			uploadForm = new UploadForm();
-			uploadForm.setUserId(uploadUser.getUserId());
-			uploadForm.setEditId(editForm.getUserId());
-			uploadForm.setUploadName(fileName);
-			uploadForm.setPlayPath(filePath.replace(",", "/"));
-			uploadForm.setShowPath(uploadForm.getPlayPath());
-			uploadForm.setFileRemark("");
-			uploadForm.setIpAddr(request.getRemoteAddr());
-			uploadForm.setFileSavePath(SystemConfig.getSystemConfig().getFileSavePath());
+			String showPath = uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().toLowerCase().lastIndexOf(".jpg"))+"_small_.jpg";
+			ImageFormat.compressPic(SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+showPath);
+			uploadForm.setShowPath(showPath);
+		}
+		if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".avi")>0)
+		{
+			String showPath = uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().toLowerCase().lastIndexOf(".avi"))+".jpg";
+			ai.makeImgbyvideo(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+showPath);
+//			ai.makeFlashbyvideo(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+(uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().lastIndexOf(".avi"))+".flv"));
+			uploadForm.setShowPath(showPath);
+			uploadForm.setFileState("C");
+		}
+		if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".mp4")>0)
+		{
+			String showPath = uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().toLowerCase().lastIndexOf(".mp4"))+".jpg";
+			System.out.println(showPath);
+			System.out.println(SystemConfig.getSystemConfig().getFfmpegPath());
+			System.out.println(SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath());
+			System.out.println(SystemConfig.getSystemConfig().getFileRoot()+showPath);
+			ai.makeImgbyMP4(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+showPath);
+//			ai.makeFlashbyvideo(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+(uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().lastIndexOf(".avi"))+".flv"));
+			uploadForm.setShowPath(showPath);
+			System.out.println(uploadForm.getPlayPath());
+			uploadForm.setFlvPath(uploadForm.getPlayPath());
 			uploadForm.setFileState("A");
-			
-			if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".jpg")>0)
-			{
-				String showPath = uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().toLowerCase().lastIndexOf(".jpg"))+"_small_.jpg";
-				ImageFormat.compressPic(SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+showPath);
-				uploadForm.setShowPath(showPath);
+		}
+		if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".wav")>0)
+		{
+			String showPath = "images/WAV.png";
+			uploadForm.setShowPath(showPath);
+			uploadForm.setFileState("A");
+		}
+		uploadForm.setFileCreatetime(createTime.replace(":", "").replace("-", "").replace(" ", ""));
+		uploadForm.setTree2Id(uploadUser.getTreeId());
+		uploadForm.setTree1Id(userDAO.getUserParentTreeId(uploadUser.getTreeId()));
+		if(userDAO.getUserParentTreeId(uploadUser.getTreeId())==0)//如果用户是大队的，那么就没有上级，上级还是大队的treeid
+		{
+			uploadForm.setTree1Id(uploadUser.getTreeId());
+		}
+		switch(userDAO.uploadFile(uploadForm))//0-添加成功；1-添加失败 系统超时~
+		{
+			case 0 : {
+//				userLog(request, "上传文件： "+uploadForm.getUploadName()+"<"+uploadForm.getPlayPath()+"> 上传成功");
+				informationFrameForm = new InformationFrameForm("上传成功~","","0","tab_wjsc","文件上传"); break;
 			}
-			if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".avi")>0)
-			{
-				String showPath = uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().toLowerCase().lastIndexOf(".avi"))+".jpg";
-				ai.makeImgbyvideo(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+showPath);
-//				ai.makeFlashbyvideo(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+(uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().lastIndexOf(".avi"))+".flv"));
-				uploadForm.setShowPath(showPath);
-				uploadForm.setFileState("C");
-			}
-			if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".mp4")>0)
-			{
-				String showPath = uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().toLowerCase().lastIndexOf(".mp4"))+".jpg";
-				System.out.println(showPath);
-				System.out.println(SystemConfig.getSystemConfig().getFfmpegPath());
-				System.out.println(SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath());
-				System.out.println(SystemConfig.getSystemConfig().getFileRoot()+showPath);
-				ai.makeImgbyMP4(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+showPath);
-//				ai.makeFlashbyvideo(SystemConfig.getSystemConfig().getFfmpegPath(), SystemConfig.getSystemConfig().getFileRoot()+uploadForm.getPlayPath(), SystemConfig.getSystemConfig().getFileRoot()+(uploadForm.getPlayPath().substring(0,uploadForm.getPlayPath().lastIndexOf(".avi"))+".flv"));
-				uploadForm.setShowPath(showPath);
-				System.out.println(uploadForm.getPlayPath());
-				uploadForm.setFlvPath(uploadForm.getPlayPath());
-				uploadForm.setFileState("A");
-			}
-			if(uploadForm.getPlayPath().toLowerCase().lastIndexOf(".wav")>0)
-			{
-				String showPath = "images/WAV.png";
-				uploadForm.setShowPath(showPath);
-				uploadForm.setFileState("A");
-			}
-			uploadForm.setFileCreatetime(createTime.replace(":", "").replace("-", "").replace(" ", ""));
-			uploadForm.setTree2Id(uploadUser.getTreeId());
-			uploadForm.setTree1Id(userDAO.getUserParentTreeId(uploadUser.getTreeId()));
-			if(userDAO.getUserParentTreeId(uploadUser.getTreeId())==0)//如果用户是大队的，那么就没有上级，上级还是大队的treeid
-			{
-				uploadForm.setTree1Id(uploadUser.getTreeId());
-			}
-			switch(userDAO.uploadFile(uploadForm))//0-添加成功；1-添加失败 系统超时~
-			{
-				case 0 : {
-//					userLog(request, "上传文件： "+uploadForm.getUploadName()+"<"+uploadForm.getPlayPath()+"> 上传成功");
-					informationFrameForm = new InformationFrameForm("上传成功~","","0","tab_wjsc","文件上传"); break;
-				}
-				case 1 : informationFrameForm = new InformationFrameForm("上传失败 系统超时~","","1","tab_wjsc","文件上传");break;
-				default : informationFrameForm = new InformationFrameForm("上传失败 系统超时~","","1","tab_wjsc","文件上传");
-			}
+			case 1 : informationFrameForm = new InformationFrameForm("上传失败 系统超时~","","1","tab_wjsc","文件上传");break;
+			default : informationFrameForm = new InformationFrameForm("上传失败 系统超时~","","1","tab_wjsc","文件上传");
 		}
 		request.setAttribute(Constants.JSP_MESSAGE, informationFrameForm);
 		return mapping.findForward(frame_information);

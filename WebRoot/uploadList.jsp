@@ -72,13 +72,13 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 			if(uploadForm.getPlayPath()!=null && uploadForm.getPlayPath().length()>4){
 				if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3).toLowerCase().equals("jpg")){
 					fileType="图片 ";
-					viewJs="<a href=\"javascript:imageDialogShow('"+uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath()+"','','查看图片');\" class='blue_mod_btn'>查看图片</a>";
+					viewJs="<a href=\"javascript:imageDialogShow('"+uploadForm.getFileSavePath()+uploadForm.getPlayPath()+"','','查看图片');\" class='blue_mod_btn'>查看图片</a>";
 				}
 				if(uploadForm.getPlayPath().substring(uploadForm.getPlayPath().length()-3,uploadForm.getPlayPath().length()).equals("mp4"))
 				{
 					fileType = "视频";
 					if(uploadForm.getFileState().equals("A")) {
-						viewJs="<a href=\"javascript:playFlvDialogShow('"+uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getFlvPath()+"','','播放视频');\" class='blue_mod_btn'>播放视频</a>";
+						viewJs="<a href=\"javascript:playFlvDialogShow('"+uploadForm.getFileSavePath()+uploadForm.getFlvPath()+"','','播放视频');\" class='blue_mod_btn'>播放视频</a>";
 					}else{
 						viewJs="<a href=\"javascript:alert('视频正在剪辑中，请稍后');\" class='blue_mod_btn'>剪辑中...</a>";
 					}
@@ -87,7 +87,7 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 				{
 					fileType = "音频";
 					if(uploadForm.getFileState().equals("A")) {
-						viewJs="<a href=\"javascript:playWavDialogShow('"+uploadForm.getFileSavePath()+"/upload/files/"+uploadForm.getPlayPath() +"','','播放音频');\" class='blue_mod_btn'>播放音频</a>";
+						viewJs="<a href=\"javascript:playWavDialogShow('"+uploadForm.getFileSavePath()+uploadForm.getPlayPath() +"','','播放音频');\" class='blue_mod_btn'>播放音频</a>";
 					}else{
 						viewJs="<a href=\"javascript:alert('视频正在剪辑中，请稍后');\" class='blue_mod_btn'>剪辑中...</a>";
 					}
@@ -108,12 +108,12 @@ String nullPoliceDescCheck = request.getParameter("nullPoliceDesc")==null?"":(re
 	%>
 	<li class="upload_item_">
 		<a href="javascript:void(0)" rel="facebox" onclick="showUploadDetail('<%=i %>')">
-		<img src="<%=uploadForm.getFileSavePath() %>/upload/files/<%=uploadForm.getShowPath()%>" width="96" height="96" />
+		<img src="<%=uploadForm.getFileSavePath() %><%=uploadForm.getShowPath()%>" width="96" height="96" />
 		</a>
 		<div class="links">
 			<%=uploadForm.getFileStats().equals("0")?"":"<img src='images/red-star.png' width='11px' height='10px' style='postion:static; top:-50%; left:-50%'/>" %>&nbsp;
 			<a href="javascript:void(0)" rel="facebox" onclick="showUploadDetail('<%=i %>')">详情</a>
-			<input type="hidden" id="img_<%=i %>" value="<%=uploadForm.getFileSavePath() %>/upload/files/<%=uploadForm.getShowPath()%>" />
+			<input type="hidden" id="img_<%=i %>" value="<%=uploadForm.getFileSavePath() %><%=uploadForm.getShowPath()%>" />
 			<input type="hidden" id="type_<%=i %>" value="<%=fileType %>" />
 			<div id='viewJs_<%=i %>' style='display:none' ><%=viewJs %> </div>
 			<input type="hidden" id="name_<%=i %>" value="<%=uploadForm.getUploadName() %>" />
